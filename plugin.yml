@@ -1,0 +1,29 @@
+---
+# Eat and heal a player instantly!
+# Copyright (C) 2020 KygekTeam
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+name: KygekEatHeal
+version: 1.0.0
+author: KygekTeam
+api: 3.0.0
+main: KygekTeam\KygekEatHeal\EatHeal
+website: https://github.com/KygekTeam/KygekEatHeal
+softdepend: EconomyAPI
+
+permissions:
+  kygekeatheal:
+    description: Permission to use all KygekEatHeal commands
+    default: true
+    children:
+      kygekeatheal.eat:
+        description: Permission to use /eat command
+        default: true
+      kygekeatheal.heal:
+        description: Permission to use /heal command
+        default: true
+...

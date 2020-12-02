@@ -1,0 +1,32 @@
+---
+# KygekEatHeal configuration file
+# KygekEatHeal was made by KygekTeam
+
+##### COMMAND SETTINGS #####
+# Custom command description
+# Leave empty to use default description
+eat-desc: ""
+heal-desc: ""
+# Add command aliases (Do not add slash before the command aliases!)
+# Leave empty to not add command aliases
+eat-aliases: []
+heal-aliases: []
+
+##### PRICE & VALUE SETTINGS #####
+# Change the price to eat/heal
+# Will be free if EconomyAPI plugin is not loaded
+eat-price: 5000
+heal-price: 5000
+# Change the eat/heal points (Full health/hunger = 20 points)
+# Set to "max" to fill health/hunger when eating/healing
+eat-value: "max"
+heal-value: "max"
+
+# Whether to check for plugin updates (Recommended)
+check-updates: true
+
+##### DANGER ZONE #####
+# Do not change this (Only for internal use)!
+config-version: "1.0"
+#######################
+...
