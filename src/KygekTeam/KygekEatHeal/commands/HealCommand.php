@@ -37,6 +37,7 @@ class HealCommand extends PluginCommand {
 
         /** @var EatHeal $owner */
         $owner = $this->getPlugin();
+        $owner->getConfig()->reload();
 
         if (!isset($args[0])) {
             if (!$sender instanceof Player) {
