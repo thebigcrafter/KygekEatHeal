@@ -35,7 +35,6 @@ class EatHeal extends PluginBase {
 
     public function onEnable() {
         if (!class_exists(EconomyAPI::class)) {
-            $this->getLogger()->notice("EconomyAPI plugin is not installed or enabled, all actions will be free");
             $this->economyAPI = null;
         } else {
             $this->economyEnabled = true;
