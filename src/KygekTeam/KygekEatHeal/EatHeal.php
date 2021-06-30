@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace KygekTeam\KygekEatHeal;
 
-use JackMD\UpdateNotifier\UpdateNotifier;
+use KygekTeam\KtpmplCfs\KtpmplCfs;
 use KygekTeam\KygekEatHeal\commands\EatCommand;
 use KygekTeam\KygekEatHeal\commands\HealCommand;
 use onebone\economyapi\EconomyAPI;
@@ -42,24 +42,12 @@ class EatHeal extends PluginBase {
         }
 
         $this->saveDefaultConfig();
-        $this->checkConfig();
+        KtpmplCfs::checkConfig($this, "1.1");
         $this->getServer()->getCommandMap()->registerAll("KygekEatHeal", [
             new EatCommand("eat", $this), new HealCommand("heal", $this)
         ]);
 
-        if ($this->getConfig()->get("check-updates", true)) {
-            UpdateNotifier::checkUpdate($this->getDescription()->getName(), $this->getDescription()->getVersion());
-        }
-    }
-
-    private function checkConfig() {
-        if ($this->getConfig()->get("config-version") !== "1.0") {
-            $this->getLogger()->notice("Your configuration file is outdated, updating the config.yml...");
-            $this->getLogger()->notice("The old configuration file can be found at config_old.yml");
-            rename($this->getDataFolder()."config.yml", $this->getDataFolder()."config_old.yml");
-            $this->saveDefaultConfig();
-            $this->getConfig()->reload();
-        }
+        KtpmplCfs::checkUpdates($this);
     }
 
     private function getEatValue(Player $player) : float {

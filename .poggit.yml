@@ -6,6 +6,6 @@ projects:
   KygekEatHeal:
     path: ""
     libs:
-    - src: JackMD/UpdateNotifier/UpdateNotifier
-      version: ^2.1
+      - src: KygekTeam/ktpmpl-cfs/ktpmpl-cfs
+        version: ^1.0
 ...
