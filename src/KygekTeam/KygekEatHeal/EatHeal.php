@@ -65,13 +65,13 @@ class EatHeal extends PluginBase {
         return ($config === "max" ? $maxHealth : ($config > $health ? $maxHealth : (float) $config + $player->getHealth()));
     }
 
-    public function eatTransaction(Player $player, bool $economyEnabled = true) {
+    public function eatTransaction(Player $player, bool $isPlayer = true, Player $senderPlayer = null) {
         if ($player->getFood() === (float) 20) return true;
 
         $price = $this->getConfig()->get("eat-price", 0);
-        if ($this->economyEnabled && $economyEnabled && $price > 0) {
-            if ($this->economyAPI->myMoney($player) < $price) return false;
-            $this->economyAPI->reduceMoney($player, $price);
+        if ($this->economyEnabled && $isPlayer && $price > 0) {
+            if ($this->economyAPI->myMoney($senderPlayer ?? $player) < $price) return false;
+            $this->economyAPI->reduceMoney($senderPlayer ?? $player, $price);
         }
 
         $eatValue = $this->getEatValue($player);
@@ -80,13 +80,13 @@ class EatHeal extends PluginBase {
         return $price ?? 0;
     }
 
-    public function healTransaction(Player $player, bool $economyEnabled = true) {
+    public function healTransaction(Player $player, bool $isPlayer = true, Player $senderPlayer = null) {
         if ($player->getHealth() === (float) 20) return true;
 
         $price = $this->getConfig()->get("heal-price", 0);
-        if ($this->economyEnabled && $economyEnabled && $price > 0) {
-            if ($this->economyAPI->myMoney($player) < $price) return false;
-            $this->economyAPI->reduceMoney($player, $price);
+        if ($this->economyEnabled && $isPlayer && $price > 0) {
+            if ($this->economyAPI->myMoney($senderPlayer ?? $player) < $price) return false;
+            $this->economyAPI->reduceMoney($senderPlayer ?? $player, $price);
         }
 
         $healValue = $this->getHealValue($player);

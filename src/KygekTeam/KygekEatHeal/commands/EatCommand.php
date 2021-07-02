@@ -96,8 +96,11 @@ class EatCommand extends PluginCommand {
                 $this->cooldownOther[$sender->getName()] = time();
             }
 
-            $isPlayer = $sender instanceof Player;
-            $result = $owner->eatTransaction($player, $isPlayer);
+            if ($isPlayer = $sender instanceof Player) {
+                $result = $owner->eatTransaction($player, $isPlayer, $sender);
+            } else {
+                $result = $owner->eatTransaction($player, $isPlayer);
+            }
 
             if ($result === true) {
                 $sender->sendMessage(EatHeal::PREFIX . EatHeal::INFO . $player->getName() . " is already full!");

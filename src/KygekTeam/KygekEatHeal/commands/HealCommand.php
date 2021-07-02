@@ -96,8 +96,11 @@ class HealCommand extends PluginCommand {
                 $this->cooldownOther[$sender->getName()] = time();
             }
 
-            $isPlayer = $sender instanceof Player;
-            $result = $owner->healTransaction($player, $isPlayer);
+            if ($isPlayer = $sender instanceof Player) {
+                $result = $owner->healTransaction($player, $isPlayer, $sender);
+            } else {
+                $result = $owner->healTransaction($player, $isPlayer);
+            }
 
             if ($result === true) {
                 $sender->sendMessage(EatHeal::PREFIX . EatHeal::INFO . $player->getName() . " is already healthy!");
