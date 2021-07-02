@@ -22,6 +22,18 @@ heal-price: 5000
 eat-value: "max"
 heal-value: "max"
 
+##### COOLDOWN SETTINGS #####
+# Whether to enable cooldown in console
+enable-console-cooldown: false
+# Set eat command cooldown for self and other (in seconds)
+# Set to 0 to disable cooldown
+eat-cooldown-self: 0
+eat-cooldown-other: 0
+# Set heal command cooldown for self and other (in seconds)
+# Set to 0 to disable cooldown
+heal-cooldown-self: 0
+heal-cooldown-other: 0
+
 # Whether to check for plugin updates (Recommended)
 check-updates: true
 

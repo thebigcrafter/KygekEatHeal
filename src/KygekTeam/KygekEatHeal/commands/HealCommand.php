@@ -21,6 +21,11 @@ use pocketmine\Player;
 
 class HealCommand extends PluginCommand {
 
+    /** @var int[] */
+    private $cooldownSelf = [];
+    /** @var int[] */
+    private $cooldownOther = [];
+
     public function __construct(string $name, EatHeal $owner) {
         parent::__construct($name, $owner);
 
@@ -37,12 +42,24 @@ class HealCommand extends PluginCommand {
 
         /** @var EatHeal $owner */
         $owner = $this->getPlugin();
-        $owner->getConfig()->reload();
+        $config = $owner->getConfig();
+        $config->reload();
 
         if (!isset($args[0])) {
             if (!$sender instanceof Player) {
                 $sender->sendMessage(EatHeal::PREFIX . EatHeal::INFO . "Usage: /heal <player>");
                 return true;
+            }
+
+            $cooldown = $config->get("heal-cooldown-self",0);
+            if ($cooldown !== 0) {
+                if (isset($this->cooldownSelf[$sender->getName()]) && time() - $cooldown < $this->cooldownSelf[$sender->getName()]) {
+                    $duration = $this->cooldownSelf[$sender->getName()] - (time() - $cooldown);
+                    $sec = $duration <= 1 ? "second" : "seconds";
+                    $sender->sendMessage(EatHeal::PREFIX . EatHeal::WARNING . "Healing yourself is currently on cooldown. Please wait " . $duration . " " . $sec . " before healing yourself again.");
+                    return true;
+                }
+                $this->cooldownSelf[$sender->getName()] = time();
             }
 
             $result = $owner->healTransaction($sender);
@@ -66,6 +83,17 @@ class HealCommand extends PluginCommand {
             if (is_null($player)) {
                 $sender->sendMessage(EatHeal::PREFIX . EatHeal::WARNING . "Player is not online!");
                 return true;
+            }
+
+            $cooldown = $config->get("heal-cooldown-other",0);
+            if (($cooldown !== 0 && $sender instanceof Player) || (!$sender instanceof Player && $config->get("enable-console-cooldown", false))) {
+                if (isset($this->cooldownOther[$sender->getName()]) && time() - $cooldown < $this->cooldownOther[$sender->getName()]) {
+                    $duration = $this->cooldownOther[$sender->getName()] - (time() - $cooldown);
+                    $sec = $duration <= 1 ? "second" : "seconds";
+                    $sender->sendMessage(EatHeal::PREFIX . EatHeal::WARNING . "Healing other player is currently on cooldown. Please wait " . $duration . " " . $sec . " before healing other player again.");
+                    return true;
+                }
+                $this->cooldownOther[$sender->getName()] = time();
             }
 
             $isPlayer = $sender instanceof Player;
