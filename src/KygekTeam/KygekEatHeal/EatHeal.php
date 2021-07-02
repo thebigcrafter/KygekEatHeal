@@ -68,8 +68,8 @@ class EatHeal extends PluginBase {
     public function eatTransaction(Player $player, bool $economyEnabled = true) {
         if ($player->getFood() === (float) 20) return true;
 
-        if ($this->economyEnabled && $economyEnabled) {
-            $price = $this->getConfig()->get("eat-price", 0);
+        $price = $this->getConfig()->get("eat-price", 0);
+        if ($this->economyEnabled && $economyEnabled && $price > 0) {
             if ($this->economyAPI->myMoney($player) < $price) return false;
             $this->economyAPI->reduceMoney($player, $price);
         }
@@ -83,8 +83,8 @@ class EatHeal extends PluginBase {
     public function healTransaction(Player $player, bool $economyEnabled = true) {
         if ($player->getHealth() === (float) 20) return true;
 
-        if ($this->economyEnabled && $economyEnabled) {
-            $price = $this->getConfig()->get("heal-price", 0);
+        $price = $this->getConfig()->get("heal-price", 0);
+        if ($this->economyEnabled && $economyEnabled && $price > 0) {
             if ($this->economyAPI->myMoney($player) < $price) return false;
             $this->economyAPI->reduceMoney($player, $price);
         }

@@ -73,7 +73,7 @@ class HealCommand extends PluginCommand {
                 return true;
             }
 
-            $price = ($owner->economyEnabled) ?
+            $price = ($owner->economyEnabled && $result > 0) ?
                 " for " . $owner->economyAPI->getMonetaryUnit() . $result : "";
 
             $sender->sendMessage(EatHeal::PREFIX . EatHeal::INFO . "You have been healed" . $price);
@@ -108,7 +108,7 @@ class HealCommand extends PluginCommand {
                 return true;
             }
 
-            $price = ($owner->economyEnabled && $isPlayer) ?
+            $price = ($owner->economyEnabled && $isPlayer && $result > 0) ?
                 " for " . $owner->economyAPI->getMonetaryUnit() . $result : "";
 
             // Sends a message to healer
