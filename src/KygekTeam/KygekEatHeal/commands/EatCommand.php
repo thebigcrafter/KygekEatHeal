@@ -29,10 +29,10 @@ class EatCommand extends PluginCommand {
     public function __construct(string $name, EatHeal $owner) {
         parent::__construct($name, $owner);
 
-        $desc = empty($owner->getConfig()->get("eat-desc")) ?
-            "Eat or feed a player" : $owner->getConfig()->get("eat-desc");
+        $desc = empty($owner->getConfig()->getNested("command.description.eat")) ?
+            "Eat or feed a player" : $owner->getConfig()->getNested("command.description.eat");
         $this->setDescription($desc);
-        $this->setAliases($owner->getConfig()->get("eat-aliases", []));
+        $this->setAliases($owner->getConfig()->getNested("command.aliases.eat", []));
         $this->setUsage("/eat [player]");
         $this->setPermission("kygekeatheal.eat");
     }
@@ -51,7 +51,7 @@ class EatCommand extends PluginCommand {
                 return true;
             }
 
-            $cooldown = $config->get("eat-cooldown-self",0);
+            $cooldown = $config->getNested("cooldown.self.eat",0);
             if ($cooldown !== 0) {
                 if (isset($this->cooldownSelf[$sender->getName()]) && time() - $cooldown < $this->cooldownSelf[$sender->getName()]) {
                     $duration = $this->cooldownSelf[$sender->getName()] - (time() - $cooldown);
@@ -85,8 +85,8 @@ class EatCommand extends PluginCommand {
                 return true;
             }
 
-            $cooldown = $config->get("eat-cooldown-other",0);
-            if (($cooldown !== 0 && $sender instanceof Player) || (!$sender instanceof Player && $config->get("enable-console-cooldown", false))) {
+            $cooldown = $config->getNested("cooldown.others.eat",0);
+            if (($cooldown !== 0 && $sender instanceof Player) || (!$sender instanceof Player && $config->getNested("cooldown.enable-console", false))) {
                 if (isset($this->cooldownOther[$sender->getName()]) && time() - $cooldown < $this->cooldownOther[$sender->getName()]) {
                     $duration = $this->cooldownOther[$sender->getName()] - (time() - $cooldown);
                     $sec = $duration <= 1 ? "second" : "seconds";

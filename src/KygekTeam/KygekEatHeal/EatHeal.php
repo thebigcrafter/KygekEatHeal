@@ -51,14 +51,14 @@ class EatHeal extends PluginBase {
     }
 
     private function getEatValue(Player $player) : float {
-        $config = $this->getConfig()->get("eat-value", "max");
+        $config = $this->getConfig()->getNested("points.eat", "max");
         $food = $player->getMaxFood() - $player->getFood();
 
         return ($config === "max" ? $food : ($config > $food ? $food : (float) $config));
     }
 
     private function getHealValue(Player $player) : float {
-        $config = $this->getConfig()->get("heal-value", "max");
+        $config = $this->getConfig()->getNested("points.heal", "max");
         $maxHealth = $player->getMaxHealth();
         $health = $maxHealth - $player->getHealth();
 
@@ -68,7 +68,7 @@ class EatHeal extends PluginBase {
     public function eatTransaction(Player $player, bool $isPlayer = true, Player $senderPlayer = null) {
         if ($player->getFood() === (float) 20) return true;
 
-        $price = $this->getConfig()->get("eat-price", 0);
+        $price = $this->getConfig()->getNested("price.eat", 0);
         if ($this->economyEnabled && $isPlayer && $price > 0) {
             if ($this->economyAPI->myMoney($senderPlayer ?? $player) < $price) return false;
             $this->economyAPI->reduceMoney($senderPlayer ?? $player, $price);
@@ -83,7 +83,7 @@ class EatHeal extends PluginBase {
     public function healTransaction(Player $player, bool $isPlayer = true, Player $senderPlayer = null) {
         if ($player->getHealth() === (float) 20) return true;
 
-        $price = $this->getConfig()->get("heal-price", 0);
+        $price = $this->getConfig()->getNested("price.heal", 0);
         if ($this->economyEnabled && $isPlayer && $price > 0) {
             if ($this->economyAPI->myMoney($senderPlayer ?? $player) < $price) return false;
             $this->economyAPI->reduceMoney($senderPlayer ?? $player, $price);

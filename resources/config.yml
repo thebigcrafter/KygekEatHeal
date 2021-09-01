@@ -1,38 +1,58 @@
 ---
 # KygekEatHeal configuration file
-# KygekEatHeal was made by KygekTeam
+# KygekEatHeal is a plugin made by KygekTeam
 
 ##### COMMAND SETTINGS #####
-# Custom command description
-# Leave empty to use default description
-eat-desc: ""
-heal-desc: ""
-# Add command aliases (Do not add slash before the command aliases!)
-# Leave empty to not add command aliases
-eat-aliases: []
-heal-aliases: []
+command:
+  # Custom command description
+  # Leave empty to use default description
+  description:
+    # Description for eat command
+    eat: ""
+    # Description for heal command
+    heal: ""
+  # Add command aliases (Do not add slash before the command aliases!)
+  # Leave empty to not add command aliases
+  aliases:
+    # Aliases for eat command
+    eat: []
+    # Aliases for heal command
+    heal: []
 
 ##### PRICE & VALUE SETTINGS #####
-# Change the price to eat/heal
 # Will be free if EconomyAPI plugin is not loaded or set to 0
-eat-price: 5000
-heal-price: 5000
-# Change the eat/heal points (Full health/hunger = 20 points)
-# Set to "max" to fill health/hunger when eating/healing
-eat-value: "max"
-heal-value: "max"
+# Default price is 0 (free)
+price:
+  # Price for eating/feeding
+  eat: 0
+  # Price for healing
+  heal: 0
+# Health/hunger points to fill (Full health/hunger = 20 points)
+# Set to "max" to fill health/hunger to maximum when eating/healing
+points:
+  # Health points when eating/feeding
+  eat: "max"
+  # Hunger points when healing
+  heal: "max"
 
 ##### COOLDOWN SETTINGS #####
-# Whether to enable cooldown in console
-enable-console-cooldown: false
-# Set eat command cooldown for self and other (in seconds)
-# Set to 0 to disable cooldown
-eat-cooldown-self: 0
-eat-cooldown-other: 0
-# Set heal command cooldown for self and other (in seconds)
-# Set to 0 to disable cooldown
-heal-cooldown-self: 0
-heal-cooldown-other: 0
+cooldown:
+  # Whether to enable cooldown in console
+  enable-console: false
+  # Set cooldown for eating or healing self (in seconds)
+  # Set to 0 to disable cooldown
+  self:
+    # Eating/feeding cooldown
+    eat: 0
+    # Healing cooldown
+    heal: 0
+  # Set cooldown for feeding or healing others (in seconds)
+  # Set to 0 to disable cooldown
+  others:
+    # Eating/feeding cooldown
+    eat: 0
+    # Healing cooldown
+    heal: 0
 
 # Whether to check for plugin updates (Recommended)
 check-updates: true
