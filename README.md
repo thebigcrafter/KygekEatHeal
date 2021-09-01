@@ -13,6 +13,7 @@ A PocketMine-MP plugin that can heal and feed yourself or other players. Economy
 - Offline player detection
 - Full or healthy detection (so you won't waste money!)
 - Customizeable heal and feed cooldown
+- Custom prefix for messages and logs
 - Command descrption can be changed
 - Supports command aliases
 - Automatic plugin updates checker

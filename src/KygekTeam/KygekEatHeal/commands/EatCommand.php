@@ -43,11 +43,11 @@ class EatCommand extends PluginCommand {
         /** @var EatHeal $owner */
         $owner = $this->getPlugin();
         $config = $owner->getConfig();
-        $config->reload();
+        $owner->reloadConfig();
 
         if (!isset($args[0])) {
             if (!$sender instanceof Player) {
-                $sender->sendMessage(EatHeal::PREFIX . EatHeal::INFO . "Usage: /eat <player>");
+                $sender->sendMessage(EatHeal::$prefix . EatHeal::INFO . "Usage: /eat <player>");
                 return true;
             }
 
@@ -56,7 +56,7 @@ class EatCommand extends PluginCommand {
                 if (isset($this->cooldownSelf[$sender->getName()]) && time() - $cooldown < $this->cooldownSelf[$sender->getName()]) {
                     $duration = $this->cooldownSelf[$sender->getName()] - (time() - $cooldown);
                     $sec = $duration <= 1 ? "second" : "seconds";
-                    $sender->sendMessage(EatHeal::PREFIX . EatHeal::WARNING . "Eating is currently on cooldown. Please wait " . $duration . " " . $sec . " before eating again.");
+                    $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Eating is currently on cooldown. Please wait " . $duration . " " . $sec . " before eating again.");
                     return true;
                 }
                 $this->cooldownSelf[$sender->getName()] = time();
@@ -65,23 +65,23 @@ class EatCommand extends PluginCommand {
             $result = $owner->eatTransaction($sender);
 
             if ($result === true) {
-                $sender->sendMessage(EatHeal::PREFIX . EatHeal::INFO . "You are already full!");
+                $sender->sendMessage(EatHeal::$prefix . EatHeal::INFO . "You are already full!");
                 return true;
             }
             if ($result === false) {
-                $sender->sendMessage(EatHeal::PREFIX . EatHeal::WARNING . "You do not have enough money to eat!");
+                $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "You do not have enough money to eat!");
                 return true;
             }
 
             $price = ($owner->economyEnabled && $result > 0) ?
                 " for " . $owner->economyAPI->getMonetaryUnit() . $result : "";
 
-            $sender->sendMessage(EatHeal::PREFIX . EatHeal::INFO . "You have eaten" . $price);
+            $sender->sendMessage(EatHeal::$prefix . EatHeal::INFO . "You have eaten" . $price);
         } else {
             $player = $owner->getServer()->getPlayer($args[0]);
 
             if (is_null($player)) {
-                $sender->sendMessage(EatHeal::PREFIX . EatHeal::WARNING . "Player is not online!");
+                $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Player is not online!");
                 return true;
             }
 
@@ -90,7 +90,7 @@ class EatCommand extends PluginCommand {
                 if (isset($this->cooldownOther[$sender->getName()]) && time() - $cooldown < $this->cooldownOther[$sender->getName()]) {
                     $duration = $this->cooldownOther[$sender->getName()] - (time() - $cooldown);
                     $sec = $duration <= 1 ? "second" : "seconds";
-                    $sender->sendMessage(EatHeal::PREFIX . EatHeal::WARNING . "Feeding other player is currently on cooldown. Please wait " . $duration . " " . $sec . " before feeding other player again.");
+                    $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Feeding other player is currently on cooldown. Please wait " . $duration . " " . $sec . " before feeding other player again.");
                     return true;
                 }
                 $this->cooldownOther[$sender->getName()] = time();
@@ -103,11 +103,11 @@ class EatCommand extends PluginCommand {
             }
 
             if ($result === true) {
-                $sender->sendMessage(EatHeal::PREFIX . EatHeal::INFO . $player->getName() . " is already full!");
+                $sender->sendMessage(EatHeal::$prefix . EatHeal::INFO . $player->getName() . " is already full!");
                 return true;
             }
             if ($result === false) {
-                $sender->sendMessage(EatHeal::PREFIX . EatHeal::WARNING . "You do not have enough money to feed " . $player->getName() . "!");
+                $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "You do not have enough money to feed " . $player->getName() . "!");
                 return true;
             }
 
@@ -115,9 +115,9 @@ class EatCommand extends PluginCommand {
                 " for " . $owner->economyAPI->getMonetaryUnit() . $result : "";
 
             // Sends a message to feeder
-            $sender->sendMessage(EatHeal::PREFIX . EatHeal::INFO . "Player " . $player->getName() . " has been fed" . $price);
+            $sender->sendMessage(EatHeal::$prefix . EatHeal::INFO . "Player " . $player->getName() . " has been fed" . $price);
             // Sends a message to eater
-            $player->sendMessage(EatHeal::PREFIX . EatHeal::INFO . "You have been fed by " . $sender->getName());
+            $player->sendMessage(EatHeal::$prefix . EatHeal::INFO . "You have been fed by " . $sender->getName());
         }
 
         return true;

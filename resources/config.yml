@@ -54,6 +54,10 @@ cooldown:
     # Healing cooldown
     heal: 0
 
+# Prefix to be used in KygekEatHeal messages and logs
+# Use & for formatting codes (e.g. &a)
+message-prefix: "&e[KygekEatHeal] "
+
 # Whether to check for plugin updates (Recommended)
 check-updates: true
 

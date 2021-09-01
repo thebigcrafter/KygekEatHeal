@@ -24,9 +24,11 @@ use pocketmine\utils\TextFormat as TF;
 
 class EatHeal extends PluginBase {
 
-    public const PREFIX = TF::YELLOW . "[KygekEatHeal] " . TF::RESET;
     public const INFO = TF::GREEN;
     public const WARNING = TF::RED;
+
+    /** @var string */
+    public static $prefix = TF::YELLOW . "[KygekEatHeal] " . TF::RESET;
 
     /** @var bool */
     public $economyEnabled = false;
@@ -47,6 +49,7 @@ class EatHeal extends PluginBase {
             new EatCommand("eat", $this), new HealCommand("heal", $this)
         ]);
 
+        self::$prefix = TF::colorize($this->getConfig()->get("message-prefix", "&e[KygekEatHeal] ")) . TF::RESET;
         KtpmplCfs::checkUpdates($this);
     }
 
@@ -92,6 +95,11 @@ class EatHeal extends PluginBase {
         $healValue = $this->getHealValue($player);
         $player->setHealth($healValue);
         return $price ?? 0;
+    }
+
+    public function reloadConfig() {
+        parent::reloadConfig();
+        self::$prefix = TF::colorize($this->getConfig()->get("message-prefix", "&e[KygekEatHeal] ")) . TF::RESET;
     }
 
 }
