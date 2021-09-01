@@ -42,7 +42,7 @@ class EatHeal extends PluginBase {
         }
 
         $this->saveDefaultConfig();
-        KtpmplCfs::checkConfig($this, "1.1");
+        KtpmplCfs::checkConfig($this, "1.2");
         $this->getServer()->getCommandMap()->registerAll("KygekEatHeal", [
             new EatCommand("eat", $this), new HealCommand("heal", $this)
         ]);
