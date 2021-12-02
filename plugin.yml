@@ -12,6 +12,7 @@ version: 2.0.0
 author: KygekTeam
 api: 4.0.0
 main: KygekTeam\KygekEatHeal\EatHeal
+description: Eat and heal a player instantly!
 website: https://github.com/KygekTeam/KygekEatHeal
 softdepend: BedrockEconomy
 
