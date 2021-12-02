@@ -3,11 +3,13 @@
 [![Poggit](https://poggit.pmmp.io/shield.dl.total/KygekEatHeal)](https://poggit.pmmp.io/p/KygekEatHeal)
 [![Discord](https://img.shields.io/discord/735439472992321587.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/CXtqUZv)
 
-A PocketMine-MP plugin that can heal and feed yourself or other players. EconomyAPI is supported for paid heals and feeds.
+**NOTICE:** This plugin branch is for PocketMine-MP 4. If you are looking for the PocketMine-MP 3 version of this plugin, please visit the [main](https://github.com/KygekTeam/KygekEatHeal/tree/main) branch.
+
+A PocketMine-MP plugin that can heal and feed yourself or other players. [BedrockEconomy](https://github.com/cooldogedev/BedrockEconomy) is supported for paid heals and feeds.
 
 # Features
 
-- EconomyAPI support for paid heals and feeds
+- [BedrockEconomy](https://github.com/cooldogedev/BedrockEconomy) support for paid heals and feeds
 - Customizeable heal or feed amount (points)
 - Heal or feed another player
 - Offline player detection

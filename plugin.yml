@@ -8,22 +8,21 @@
 # (at your option) any later version.
 
 name: KygekEatHeal
-version: 1.2.0
+version: 2.0.0
 author: KygekTeam
-api: 3.0.0
+api: 4.0.0
 main: KygekTeam\KygekEatHeal\EatHeal
 website: https://github.com/KygekTeam/KygekEatHeal
-softdepend: EconomyAPI
+softdepend: BedrockEconomy
 
 permissions:
   kygekeatheal:
     description: Permission to use all KygekEatHeal commands
     default: true
-    children:
-      kygekeatheal.eat:
-        description: Permission to use /eat command
-        default: true
-      kygekeatheal.heal:
-        description: Permission to use /heal command
-        default: true
+  kygekeatheal.eat:
+    description: Permission to use /eat command
+    default: true
+  kygekeatheal.heal:
+    description: Permission to use /heal command
+    default: true
 ...

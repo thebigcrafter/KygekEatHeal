@@ -16,31 +16,34 @@ namespace KygekTeam\KygekEatHeal\commands;
 
 use KygekTeam\KygekEatHeal\EatHeal;
 use pocketmine\command\CommandSender;
-use pocketmine\command\PluginCommand;
-use pocketmine\Player;
+use pocketmine\command\Command;
+use pocketmine\player\Player;
 
-class EatCommand extends PluginCommand {
+class EatCommand extends Command {
 
     /** @var int[] */
-    private $cooldownSelf = [];
+    private array $cooldownSelf = [];
     /** @var int[] */
-    private $cooldownOther = [];
+    private array $cooldownOther = [];
+
+    private EatHeal $owner;
 
     public function __construct(string $name, EatHeal $owner) {
-        parent::__construct($name, $owner);
-
         $desc = empty($owner->getConfig()->getNested("command.description.eat")) ?
             "Eat or feed a player" : $owner->getConfig()->getNested("command.description.eat");
-        $this->setDescription($desc);
-        $this->setAliases($owner->getConfig()->getNested("command.aliases.eat", []));
-        $this->setUsage("/eat [player]");
+        parent::__construct($name, $desc, "/eat [player]", $owner->getConfig()->getNested("command.aliases.eat", []));
+
+        $this->owner = $owner;
         $this->setPermission("kygekeatheal.eat");
     }
 
-    public function execute(CommandSender $sender, string $commandLabel, array $args) : bool {
-        if (!$this->testPermission($sender)) return true;
+    private function getPlugin() : EatHeal {
+        return $this->owner;
+    }
 
-        /** @var EatHeal $owner */
+    public function execute(CommandSender $sender, string $commandLabel, array $args) : bool {
+        if (!$sender->hasPermission("kygekeatheal") && !$this->testPermission($sender)) return true;
+
         $owner = $this->getPlugin();
         $config = $owner->getConfig();
         $owner->reloadConfig();
@@ -74,11 +77,11 @@ class EatCommand extends PluginCommand {
             }
 
             $price = ($owner->economyEnabled && $result > 0) ?
-                " for " . $owner->economyAPI->getMonetaryUnit() . $result : "";
+                " for " . $owner->economyAPI->getPlugin()->getCurrencyManager()->getSymbol() . $result : "";
 
             $sender->sendMessage(EatHeal::$prefix . EatHeal::INFO . "You have eaten" . $price);
         } else {
-            $player = $owner->getServer()->getPlayer($args[0]);
+            $player = $owner->getServer()->getPlayerByPrefix($args[0]);
 
             if (is_null($player)) {
                 $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Player is not online!");
@@ -97,9 +100,9 @@ class EatCommand extends PluginCommand {
             }
 
             if ($isPlayer = $sender instanceof Player) {
-                $result = $owner->eatTransaction($player, $isPlayer, $sender);
+                $result = $owner->eatTransaction($player, true, $sender);
             } else {
-                $result = $owner->eatTransaction($player, $isPlayer);
+                $result = $owner->eatTransaction($player, false);
             }
 
             if ($result === true) {
@@ -112,7 +115,7 @@ class EatCommand extends PluginCommand {
             }
 
             $price = ($owner->economyEnabled && $isPlayer && $result > 0) ?
-                " for " . $owner->economyAPI->getMonetaryUnit() . $result : "";
+                " for " . $owner->economyAPI->getPlugin()->getCurrencyManager()->getSymbol() . $result : "";
 
             // Sends a message to feeder
             $sender->sendMessage(EatHeal::$prefix . EatHeal::INFO . "Player " . $player->getName() . " has been fed" . $price);

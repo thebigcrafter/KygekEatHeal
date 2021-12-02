@@ -20,7 +20,7 @@ command:
     heal: []
 
 ##### PRICE & VALUE SETTINGS #####
-# Will be free if EconomyAPI plugin is not loaded or set to 0
+# Will be free if BedrockEconomy plugin is not loaded or set to 0
 # Default price is 0 (free)
 price:
   # Price for eating/feeding
@@ -63,6 +63,6 @@ check-updates: true
 
 ##### DANGER ZONE #####
 # Do not change this (Only for internal use)!
-config-version: "1.2"
+config-version: "2.0"
 #######################
 ...
