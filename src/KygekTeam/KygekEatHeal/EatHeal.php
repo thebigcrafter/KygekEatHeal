@@ -26,6 +26,8 @@ use pocketmine\utils\TextFormat as TF;
 
 class EatHeal extends PluginBase {
 
+    private const IS_DEV = false;
+
     public const INFO = TF::GREEN;
     public const WARNING = TF::RED;
 
@@ -35,6 +37,11 @@ class EatHeal extends PluginBase {
     public ?SessionManager $economyAPI;
 
     protected function onEnable() : void {
+        /** @phpstan-ignore-next-line */
+        if (self::IS_DEV) {
+            $this->getLogger()->warning("This plugin is running on a development version. There might be some major bugs. If you found one, please submit an issue in https://github.com/KygekTeam/KygekEatHeal/issues.");
+        }
+
         if (!class_exists(BedrockEconomy::class)) {
             $this->economyAPI = null;
         } else {
