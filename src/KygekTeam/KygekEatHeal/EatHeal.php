@@ -30,6 +30,10 @@ class EatHeal extends PluginBase {
     public const INFO = TF::GREEN;
     public const WARNING = TF::RED;
 
+    public const TRANSACTION_ERROR_CAUSE_FULL = "transactionErrorCauseFull";
+    public const TRANSACTION_ERROR_CAUSE_INSUFFICIENT_BALANCE = "transactionErrorCauseInsufficientBalance";
+    public const TRANSACTION_ERROR_CAUSE_EVENT_CANCELLED = "transactionErrorCauseEventCancelled";
+
     public static string $prefix = TF::YELLOW . "[KygekEatHeal] " . TF::RESET;
 
     public bool $economyEnabled = false;
@@ -73,15 +77,19 @@ class EatHeal extends PluginBase {
         return ($config === "max" ? $maxHealth : ($config > $health ? $maxHealth : (float) $config + $player->getHealth()));
     }
 
-    public function eatTransaction(Player $player, bool $isPlayer = true, Player $senderPlayer = null) : bool|int {
-        if ($player->getHungerManager()->getFood() === 20.0) return true;
+    public function eatTransaction(Player $player, bool $isPlayer = true, Player $senderPlayer = null) : string|int {
+        if ($player->getHungerManager()->getFood() === 20.0) return self::TRANSACTION_ERROR_CAUSE_FULL;
 
         $price = (int) $this->getConfig()->getNested("price.eat", 0);
         if ($this->economyEnabled && $isPlayer && $price > 0) {
             $account = $this->economyAPI->getPlayerAccount($senderPlayer !== null ? $senderPlayer->getName() : $player->getName());
 
-            if ($account->getBalance() < $price) return false;
-            $account->decrementBalance($price);
+            if ($account->getBalance() < $price) {
+                return self::TRANSACTION_ERROR_CAUSE_INSUFFICIENT_BALANCE;
+            }
+            if (!$account->decrementBalance($price)) {
+                return self::TRANSACTION_ERROR_CAUSE_EVENT_CANCELLED;
+            }
         }
 
         $eatValue = $this->getEatValue($player);
@@ -90,15 +98,19 @@ class EatHeal extends PluginBase {
         return $price;
     }
 
-    public function healTransaction(Player $player, bool $isPlayer = true, Player $senderPlayer = null) : bool|int {
-        if ($player->getHealth() === 20.0) return true;
+    public function healTransaction(Player $player, bool $isPlayer = true, Player $senderPlayer = null) : string|int {
+        if ($player->getHealth() === 20.0) return self::TRANSACTION_ERROR_CAUSE_FULL;
 
         $price = (int) $this->getConfig()->getNested("price.heal", 0);
         if ($this->economyEnabled && $isPlayer && $price > 0) {
             $account = $this->economyAPI->getPlayerAccount($senderPlayer !== null ? $senderPlayer->getName() : $player->getName());
 
-            if ($account->getBalance() < $price) return false;
-            $account->decrementBalance($price);
+            if ($account->getBalance() < $price) {
+                return self::TRANSACTION_ERROR_CAUSE_INSUFFICIENT_BALANCE;
+            }
+            if (!$account->decrementBalance($price)) {
+                return self::TRANSACTION_ERROR_CAUSE_EVENT_CANCELLED;
+            }
         }
 
         $healValue = $this->getHealValue($player);

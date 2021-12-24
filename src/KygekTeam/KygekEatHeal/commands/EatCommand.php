@@ -65,13 +65,16 @@ class EatCommand extends Command implements PluginOwned {
 
             $result = $owner->eatTransaction($sender);
 
-            if ($result === true) {
-                $sender->sendMessage(EatHeal::$prefix . EatHeal::INFO . "You are already full!");
-                return true;
-            }
-            if ($result === false) {
-                $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "You do not have enough money to eat!");
-                return true;
+            switch ($result) {
+                case EatHeal::TRANSACTION_ERROR_CAUSE_FULL:
+                    $sender->sendMessage(EatHeal::$prefix . EatHeal::INFO . "You are already full!");
+                    return true;
+                case EatHeal::TRANSACTION_ERROR_CAUSE_INSUFFICIENT_BALANCE:
+                    $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "You do not have enough money to eat!");
+                    return true;
+                case EatHeal::TRANSACTION_ERROR_CAUSE_EVENT_CANCELLED:
+                    $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Unable to make transaction due to the API event being cancelled.");
+                    return true;
             }
 
             $price = ($owner->economyEnabled && $result > 0) ?
@@ -103,13 +106,16 @@ class EatCommand extends Command implements PluginOwned {
                 $result = $owner->eatTransaction($player, false);
             }
 
-            if ($result === true) {
-                $sender->sendMessage(EatHeal::$prefix . EatHeal::INFO . $player->getName() . " is already full!");
-                return true;
-            }
-            if ($result === false) {
-                $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "You do not have enough money to feed " . $player->getName() . "!");
-                return true;
+            switch ($result) {
+                case EatHeal::TRANSACTION_ERROR_CAUSE_FULL:
+                    $sender->sendMessage(EatHeal::$prefix . EatHeal::INFO . $player->getName() . " is already full!");
+                    return true;
+                case EatHeal::TRANSACTION_ERROR_CAUSE_INSUFFICIENT_BALANCE:
+                    $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "You do not have enough money to feed " . $player->getName() . "!");
+                    return true;
+                case EatHeal::TRANSACTION_ERROR_CAUSE_EVENT_CANCELLED:
+                    $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Unable to make transaction due to the API event being cancelled.");
+                    return true;
             }
 
             $price = ($owner->economyEnabled && $isPlayer && $result > 0) ?
