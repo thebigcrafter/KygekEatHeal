@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace KygekTeam\KygekEatHeal\commands;
 
+use cooldogedev\BedrockEconomy\BedrockEconomy;
 use KygekTeam\KygekEatHeal\EatHeal;
 use pocketmine\command\CommandSender;
 use pocketmine\command\Command;
@@ -74,7 +75,7 @@ class HealCommand extends Command implements PluginOwned {
             }
 
             $price = ($owner->economyEnabled && $result > 0) ?
-                " for " . $owner->economyAPI->getPlugin()->getCurrencyManager()->getSymbol() . $result : "";
+                " for " . BedrockEconomy::getInstance()->getCurrencyManager()->getSymbol() . $result : "";
 
             $sender->sendMessage(EatHeal::$prefix . EatHeal::INFO . "You have been healed" . $price);
         } else {
@@ -112,7 +113,7 @@ class HealCommand extends Command implements PluginOwned {
             }
 
             $price = ($owner->economyEnabled && $isPlayer && $result > 0) ?
-                " for " . $owner->economyAPI->getPlugin()->getCurrencyManager()->getSymbol() . $result : "";
+                " for " . BedrockEconomy::getInstance()->getCurrencyManager()->getSymbol() . $result : "";
 
             // Sends a message to healer
             $sender->sendMessage(EatHeal::$prefix . EatHeal::INFO . "Player " . $player->getName() . " has been healed" . $price);

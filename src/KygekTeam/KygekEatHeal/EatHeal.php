@@ -14,9 +14,8 @@ declare(strict_types=1);
 
 namespace KygekTeam\KygekEatHeal;
 
+use cooldogedev\BedrockEconomy\api\BedrockEconomyAPI;
 use cooldogedev\BedrockEconomy\BedrockEconomy;
-use cooldogedev\BedrockEconomy\session\cache\SessionCache;
-use cooldogedev\BedrockEconomy\session\SessionManager;
 use KygekTeam\KtpmplCfs\KtpmplCfs;
 use KygekTeam\KygekEatHeal\commands\EatCommand;
 use KygekTeam\KygekEatHeal\commands\HealCommand;
@@ -34,7 +33,7 @@ class EatHeal extends PluginBase {
     public static string $prefix = TF::YELLOW . "[KygekEatHeal] " . TF::RESET;
 
     public bool $economyEnabled = false;
-    public ?SessionManager $economyAPI;
+    private ?BedrockEconomyAPI $economyAPI;
 
     protected function onEnable() : void {
         /** @phpstan-ignore-next-line */
@@ -46,7 +45,7 @@ class EatHeal extends PluginBase {
             $this->economyAPI = null;
         } else {
             $this->economyEnabled = true;
-            $this->economyAPI = BedrockEconomy::getInstance()->getSessionManager();
+            $this->economyAPI = BedrockEconomy::getInstance()->getAPI();
         }
 
         $this->saveDefaultConfig();
@@ -79,11 +78,10 @@ class EatHeal extends PluginBase {
 
         $price = (int) $this->getConfig()->getNested("price.eat", 0);
         if ($this->economyEnabled && $isPlayer && $price > 0) {
-            $xuid = $senderPlayer !== null ? $senderPlayer->getXuid() : $player->getXuid();
-            $session = $this->getEconomySession($xuid);
+            $account = $this->economyAPI->getPlayerAccount($senderPlayer !== null ? $senderPlayer->getName() : $player->getName());
 
-            if ($session->getBalance() < $price) return false;
-            $session->subtractFromBalance($price);
+            if ($account->getBalance() < $price) return false;
+            $account->decrementBalance($price);
         }
 
         $eatValue = $this->getEatValue($player);
@@ -97,11 +95,10 @@ class EatHeal extends PluginBase {
 
         $price = (int) $this->getConfig()->getNested("price.heal", 0);
         if ($this->economyEnabled && $isPlayer && $price > 0) {
-            $xuid = $senderPlayer !== null ? $senderPlayer->getXuid() : $player->getXuid();
-            $session = $this->getEconomySession($xuid);
+            $account = $this->economyAPI->getPlayerAccount($senderPlayer !== null ? $senderPlayer->getName() : $player->getName());
 
-            if ($session->getBalance() < $price) return false;
-            $session->subtractFromBalance($price);
+            if ($account->getBalance() < $price) return false;
+            $account->decrementBalance($price);
         }
 
         $healValue = $this->getHealValue($player);
@@ -112,18 +109,6 @@ class EatHeal extends PluginBase {
     public function reloadConfig() : void {
         parent::reloadConfig();
         self::$prefix = TF::colorize($this->getConfig()->get("message-prefix", "&e[KygekEatHeal] ")) . TF::RESET;
-    }
-
-    /**
-     * @param string $xuid
-     * @return false|SessionCache
-     */
-    public function getEconomySession(string $xuid) : bool|SessionCache {
-        if (!$this->economyEnabled) {
-            return false;
-        }
-
-        return $this->economyAPI->getSession($xuid)->getCache();
     }
 
 }
