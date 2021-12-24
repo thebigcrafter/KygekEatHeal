@@ -73,7 +73,7 @@ class HealCommand extends Command implements PluginOwned {
                     $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "You do not have enough money to heal!");
                     return true;
                 case EatHeal::TRANSACTION_ERROR_CAUSE_EVENT_CANCELLED:
-                    $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Unable to make transaction due to the API event being cancelled.");
+                    $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Unable to make transaction due to the economy API event being cancelled.");
                     return true;
             }
 
@@ -114,7 +114,7 @@ class HealCommand extends Command implements PluginOwned {
                     $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "You do not have enough money to heal " . $player->getName() . "!");
                     return true;
                 case EatHeal::TRANSACTION_ERROR_CAUSE_EVENT_CANCELLED:
-                    $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Unable to make transaction due to the API event being cancelled.");
+                    $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Unable to make transaction due to the economy API event being cancelled.");
                     return true;
             }
 
