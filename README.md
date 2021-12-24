@@ -7,6 +7,8 @@
 
 A PocketMine-MP plugin that can heal and feed yourself or other players. [BedrockEconomy](https://github.com/cooldogedev/BedrockEconomy) is supported for paid heals and feeds.
 
+**TIP:** EconomyAPI has been deprecated and perceived as obsolete because of performance reasons. BedrockEconomy is currently the preferred replacement of EconomyAPI. Therefore, starting from version 2.0.0, KygekEatHeal has started using BedrockEconomy, while also dropping EconomyAPI support. If you are interested to migrate to BedrockEconomy, you can use [its database converter](https://github.com/cooldogedev/EconAPIToBE) plugin to get started.
+
 # Features
 
 - [BedrockEconomy](https://github.com/cooldogedev/BedrockEconomy) support for paid heals and feeds
