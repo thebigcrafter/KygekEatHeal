@@ -18,8 +18,9 @@ use KygekTeam\KygekEatHeal\EatHeal;
 use pocketmine\command\CommandSender;
 use pocketmine\command\Command;
 use pocketmine\player\Player;
+use pocketmine\plugin\PluginOwned;
 
-class EatCommand extends Command {
+class EatCommand extends Command implements PluginOwned {
 
     /** @var int[] */
     private array $cooldownSelf = [];
@@ -37,14 +38,10 @@ class EatCommand extends Command {
         $this->setPermission("kygekeatheal.eat");
     }
 
-    private function getPlugin() : EatHeal {
-        return $this->owner;
-    }
-
     public function execute(CommandSender $sender, string $commandLabel, array $args) : bool {
         if (!$sender->hasPermission("kygekeatheal") && !$this->testPermission($sender)) return true;
 
-        $owner = $this->getPlugin();
+        $owner = $this->getOwningPlugin();
         $config = $owner->getConfig();
         $owner->reloadConfig();
 
@@ -124,6 +121,10 @@ class EatCommand extends Command {
         }
 
         return true;
+    }
+
+    public function getOwningPlugin() : EatHeal {
+        return $this->owner;
     }
 
 }
