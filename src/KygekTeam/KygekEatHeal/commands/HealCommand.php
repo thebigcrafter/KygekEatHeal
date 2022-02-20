@@ -2,7 +2,7 @@
 
 /*
  * Eat and heal a player instantly!
- * Copyright (C) 2020-2021 KygekTeam
+ * Copyright (C) 2020-2022 KygekTeam
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,14 +66,17 @@ class HealCommand extends Command implements PluginOwned {
             $result = $owner->healTransaction($sender);
 
             switch ($result) {
+                case EatHeal::TRANSACTION_ERROR_CAUSE_NO_ACCOUNT:
+                    $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Unable to make transaction due to the player not having an BedrockEconomy account.");
+                    return true;
                 case EatHeal::TRANSACTION_ERROR_CAUSE_FULL:
                     $sender->sendMessage(EatHeal::$prefix . EatHeal::INFO . "You are already healthy!");
                     return true;
                 case EatHeal::TRANSACTION_ERROR_CAUSE_INSUFFICIENT_BALANCE:
                     $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "You do not have enough money to heal!");
                     return true;
-                case EatHeal::TRANSACTION_ERROR_CAUSE_EVENT_CANCELLED:
-                    $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Unable to make transaction due to the economy API event being cancelled.");
+                case EatHeal::TRANSACTION_ERROR_CAUSE_NOT_UPDATED:
+                    $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Unable to make transaction due to the BedrockEconomy account balance not getting updated.");
                     return true;
             }
 
@@ -107,14 +110,17 @@ class HealCommand extends Command implements PluginOwned {
             }
 
             switch ($result) {
+                case EatHeal::TRANSACTION_ERROR_CAUSE_NO_ACCOUNT:
+                    $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Unable to make transaction due to the player not having an BedrockEconomy account.");
+                    return true;
                 case EatHeal::TRANSACTION_ERROR_CAUSE_FULL:
                     $sender->sendMessage(EatHeal::$prefix . EatHeal::INFO . $player->getName() . " is already healthy!");
                     return true;
                 case EatHeal::TRANSACTION_ERROR_CAUSE_INSUFFICIENT_BALANCE:
                     $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "You do not have enough money to heal " . $player->getName() . "!");
                     return true;
-                case EatHeal::TRANSACTION_ERROR_CAUSE_EVENT_CANCELLED:
-                    $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Unable to make transaction due to the economy API event being cancelled.");
+                case EatHeal::TRANSACTION_ERROR_CAUSE_NOT_UPDATED:
+                    $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Unable to make transaction due to the BedrockEconomy account balance not getting updated.");
                     return true;
             }
 

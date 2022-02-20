@@ -34,6 +34,9 @@ points:
   eat: "max"
   # Hunger points when healing
   heal: "max"
+# Whether to restore saturation when eating/feeding
+# Players with full saturation won't get hungry easily
+restore-saturation: true
 
 ##### COOLDOWN SETTINGS #####
 cooldown:
@@ -61,8 +64,11 @@ message-prefix: "&e[KygekEatHeal] "
 # Whether to check for plugin updates (Recommended)
 check-updates: true
 
+# Whether to warn if plugin is running on a development version (Recommended)
+warn-development: true
+
 ##### DANGER ZONE #####
 # Do not change this (Only for internal use)!
-config-version: "2.0"
+config-version: "2.1"
 #######################
 ...

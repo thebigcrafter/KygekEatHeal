@@ -2,7 +2,7 @@
 
 /*
  * Eat and heal a player instantly!
- * Copyright (C) 2020-2021 KygekTeam
+ * Copyright (C) 2020-2022 KygekTeam
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@ namespace KygekTeam\KygekEatHeal;
 
 use cooldogedev\BedrockEconomy\api\BedrockEconomyAPI;
 use cooldogedev\BedrockEconomy\BedrockEconomy;
+use cooldogedev\BedrockEconomy\libs\cooldogedev\libSQL\context\ClosureContext;
 use KygekTeam\KtpmplCfs\KtpmplCfs;
 use KygekTeam\KygekEatHeal\commands\EatCommand;
 use KygekTeam\KygekEatHeal\commands\HealCommand;
@@ -30,9 +31,10 @@ class EatHeal extends PluginBase {
     public const INFO = TF::GREEN;
     public const WARNING = TF::RED;
 
+    public const TRANSACTION_ERROR_CAUSE_NO_ACCOUNT = "transactionErrorCauseNoAccount";
     public const TRANSACTION_ERROR_CAUSE_FULL = "transactionErrorCauseFull";
     public const TRANSACTION_ERROR_CAUSE_INSUFFICIENT_BALANCE = "transactionErrorCauseInsufficientBalance";
-    public const TRANSACTION_ERROR_CAUSE_EVENT_CANCELLED = "transactionErrorCauseEventCancelled";
+    public const TRANSACTION_ERROR_CAUSE_NOT_UPDATED = "transactionErrorCauseNotUpdated";
 
     public static string $prefix = TF::YELLOW . "[KygekEatHeal] " . TF::RESET;
 
@@ -40,10 +42,16 @@ class EatHeal extends PluginBase {
     private ?BedrockEconomyAPI $economyAPI;
 
     protected function onEnable() : void {
+        $this->saveDefaultConfig();
+        $ktpmplCfs = new KtpmplCfs($this);
+
         /** @phpstan-ignore-next-line */
         if (self::IS_DEV) {
-            $this->getLogger()->warning("This plugin is running on a development version. There might be some major bugs. If you found one, please submit an issue in https://github.com/KygekTeam/KygekEatHeal/issues.");
+            $ktpmplCfs->warnDevelopmentVersion();
         }
+
+        $ktpmplCfs->checkConfig("2.1");
+        $ktpmplCfs->checkUpdates();
 
         if (!class_exists(BedrockEconomy::class)) {
             $this->economyAPI = null;
@@ -52,14 +60,10 @@ class EatHeal extends PluginBase {
             $this->economyAPI = BedrockEconomy::getInstance()->getAPI();
         }
 
-        $this->saveDefaultConfig();
-        KtpmplCfs::checkConfig($this, "2.0");
         $this->getServer()->getCommandMap()->registerAll("KygekEatHeal", [
             new EatCommand("eat", $this), new HealCommand("heal", $this)
         ]);
-
         self::$prefix = TF::colorize($this->getConfig()->get("message-prefix", "&e[KygekEatHeal] ")) . TF::RESET;
-        KtpmplCfs::checkUpdates($this);
     }
 
     private function getEatValue(Player $player) : float {
@@ -78,44 +82,67 @@ class EatHeal extends PluginBase {
     }
 
     public function eatTransaction(Player $player, bool $isPlayer = true, Player $senderPlayer = null) : string|int {
-        if ($player->getHungerManager()->getFood() === 20.0) return self::TRANSACTION_ERROR_CAUSE_FULL;
+        if ($player->getHungerManager()->getFood() >= 20.0) return self::TRANSACTION_ERROR_CAUSE_FULL;
 
         $price = (int) $this->getConfig()->getNested("price.eat", 0);
         if ($this->economyEnabled && $isPlayer && $price > 0) {
-            $account = $this->economyAPI->getPlayerAccount($senderPlayer !== null ? $senderPlayer->getName() : $player->getName());
-
-            if ($account->getBalance() < $price) {
-                return self::TRANSACTION_ERROR_CAUSE_INSUFFICIENT_BALANCE;
-            }
-            if (!$account->decrementBalance($price)) {
-                return self::TRANSACTION_ERROR_CAUSE_EVENT_CANCELLED;
+            $name = $senderPlayer !== null ? $senderPlayer->getName() : $player->getName();
+            if (($result = $this->processTransaction($name, $price)) !== null) {
+                return $result;
             }
         }
 
         $eatValue = $this->getEatValue($player);
         $player->getHungerManager()->addFood($eatValue);
-        $player->getHungerManager()->addSaturation(20);
+        if ($this->getConfig()->getNested("restore-saturation", true)) {
+            $player->getHungerManager()->addSaturation(20);
+        }
         return $price;
     }
 
     public function healTransaction(Player $player, bool $isPlayer = true, Player $senderPlayer = null) : string|int {
-        if ($player->getHealth() === 20.0) return self::TRANSACTION_ERROR_CAUSE_FULL;
+        if ($player->getHealth() >= 20.0) return self::TRANSACTION_ERROR_CAUSE_FULL;
 
         $price = (int) $this->getConfig()->getNested("price.heal", 0);
         if ($this->economyEnabled && $isPlayer && $price > 0) {
-            $account = $this->economyAPI->getPlayerAccount($senderPlayer !== null ? $senderPlayer->getName() : $player->getName());
-
-            if ($account->getBalance() < $price) {
-                return self::TRANSACTION_ERROR_CAUSE_INSUFFICIENT_BALANCE;
-            }
-            if (!$account->decrementBalance($price)) {
-                return self::TRANSACTION_ERROR_CAUSE_EVENT_CANCELLED;
+            $name = $senderPlayer !== null ? $senderPlayer->getName() : $player->getName();
+            if (($result = $this->processTransaction($name, $price)) !== null) {
+                return $result;
             }
         }
 
         $healValue = $this->getHealValue($player);
         $player->setHealth($healValue);
         return $price;
+    }
+
+    private function processTransaction($name, $price) : ?string {
+        $result = null;
+
+        $this->economyAPI->getPlayerBalance($name, ClosureContext::create(
+            function (?int $balance) use ($price, &$result) {
+                if ($balance === null) {
+                    $result = self::TRANSACTION_ERROR_CAUSE_NO_ACCOUNT;
+                    return;
+                }
+                if ($balance < $price) {
+                    $result = self::TRANSACTION_ERROR_CAUSE_INSUFFICIENT_BALANCE;
+                }
+            }
+        ));
+        if ($result !== null) {
+            return $result;
+        }
+
+        $this->economyAPI->subtractFromPlayerBalance($name, $price, ClosureContext::create(
+            function (bool $updated) use (&$result) {
+                if (!$updated) {
+                    $result = self::TRANSACTION_ERROR_CAUSE_NOT_UPDATED;
+                }
+            }
+        ));
+
+        return $result;
     }
 
     public function reloadConfig() : void {

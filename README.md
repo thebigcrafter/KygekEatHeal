@@ -17,6 +17,7 @@ A PocketMine-MP plugin that can heal and feed yourself or other players. [Bedroc
 - Offline player detection
 - Full or healthy detection (so you won't waste money!)
 - Customizeable heal and feed cooldown
+- Option to restore saturation
 - Custom prefix for messages and logs
 - Command descrption can be changed
 - Supports command aliases

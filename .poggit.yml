@@ -8,6 +8,5 @@ projects:
     path: ""
     libs:
       - src: KygekTeam/ktpmpl-cfs/ktpmpl-cfs
-        branch: pm4-updatenotifier
-        version: ^3.0
+        version: ^4.0.0
 ...
