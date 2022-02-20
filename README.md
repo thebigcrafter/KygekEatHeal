@@ -12,14 +12,14 @@ A PocketMine-MP plugin that can heal and feed yourself or other players. [Bedroc
 # Features
 
 - [BedrockEconomy](https://github.com/cooldogedev/BedrockEconomy) support for paid heals and feeds
-- Customizeable heal or feed amount (points)
+- Customizable heal or feed amount (points)
 - Heal or feed another player
 - Offline player detection
 - Full or healthy detection (so you won't waste money!)
-- Customizeable heal and feed cooldown
+- Customizable heal and feed cooldown
 - Option to restore saturation
 - Custom prefix for messages and logs
-- Command descrption can be changed
+- Command description can be changed
 - Supports command aliases
 - Automatic plugin updates checker
 - Automatic configuration files reloading
@@ -47,7 +47,7 @@ Use `-{COMMAND-PERMISSION}` to blacklist the command permissions to groups/users
 
 # Upcoming Features
 
-- Customizeable messages
+- Customizable messages
 - And much more...
 
 # Additional Notes
