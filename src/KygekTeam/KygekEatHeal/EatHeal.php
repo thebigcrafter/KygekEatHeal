@@ -116,7 +116,7 @@ class EatHeal extends PluginBase {
         return $price;
     }
 
-    private function processTransaction($name, $price) : ?string {
+    private function processTransaction(string $name, int $price) : ?string {
         $result = null;
 
         $this->economyAPI->getPlayerBalance($name, ClosureContext::create(
