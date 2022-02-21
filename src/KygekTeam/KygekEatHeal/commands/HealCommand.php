@@ -63,27 +63,29 @@ class HealCommand extends Command implements PluginOwned {
                 $this->cooldownSelf[$sender->getName()] = time();
             }
 
-            $result = $owner->healTransaction($sender);
-
-            switch ($result) {
-                case EatHeal::TRANSACTION_ERROR_CAUSE_NO_ACCOUNT:
-                    $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Unable to make transaction due to the player not having an BedrockEconomy account.");
-                    return true;
-                case EatHeal::TRANSACTION_ERROR_CAUSE_FULL:
-                    $sender->sendMessage(EatHeal::$prefix . EatHeal::INFO . "You are already healthy!");
-                    return true;
-                case EatHeal::TRANSACTION_ERROR_CAUSE_INSUFFICIENT_BALANCE:
-                    $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "You do not have enough money to heal!");
-                    return true;
-                case EatHeal::TRANSACTION_ERROR_CAUSE_NOT_UPDATED:
-                    $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Unable to make transaction due to the BedrockEconomy account balance not getting updated.");
-                    return true;
-            }
-
-            $price = ($owner->economyEnabled && $result > 0) ?
-                " for " . BedrockEconomy::getInstance()->getCurrencyManager()->getSymbol() . $result : "";
-
-            $sender->sendMessage(EatHeal::$prefix . EatHeal::INFO . "You have been healed" . $price);
+            $owner->healTransaction($sender, true, null,
+                static function (?string $result) use ($owner, $price, $sender) {
+                    switch ($result) {
+                        case EatHeal::TRANSACTION_ERROR_CAUSE_NO_ACCOUNT:
+                            $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Unable to make transaction due to the player not having an BedrockEconomy account.");
+                            return;
+                        case EatHeal::TRANSACTION_ERROR_CAUSE_FULL:
+                            $sender->sendMessage(EatHeal::$prefix . EatHeal::INFO . "You are already healthy!");
+                            return;
+                        case EatHeal::TRANSACTION_ERROR_CAUSE_INSUFFICIENT_BALANCE:
+                            $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "You do not have enough money to heal!");
+                            return;
+                        case EatHeal::TRANSACTION_ERROR_CAUSE_NOT_UPDATED:
+                            $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Unable to make transaction due to the BedrockEconomy account balance not getting updated.");
+                            return;
+                    }
+        
+                    $price = ($owner->economyEnabled && $result > 0) ?
+                        " for " . BedrockEconomy::getInstance()->getCurrencyManager()->getSymbol() . $result : "";
+        
+                    $sender->sendMessage(EatHeal::$prefix . EatHeal::INFO . "You have been healed" . $price);
+                }
+            );
         } else {
             $player = $owner->getServer()->getPlayerByPrefix($args[0]);
 
@@ -103,34 +105,36 @@ class HealCommand extends Command implements PluginOwned {
                 $this->cooldownOther[$sender->getName()] = time();
             }
 
-            if ($isPlayer = $sender instanceof Player) {
-                $result = $owner->healTransaction($player, true, $sender);
+            $isPlayer = $sender instanceof Player;
+            $callback = static function (?string $result) use ($isPlayer, $owner, $player, $price, $sender) {
+                switch ($result) {
+                    case EatHeal::TRANSACTION_ERROR_CAUSE_NO_ACCOUNT:
+                        $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Unable to make transaction due to the player not having an BedrockEconomy account.");
+                        return;
+                    case EatHeal::TRANSACTION_ERROR_CAUSE_FULL:
+                        $sender->sendMessage(EatHeal::$prefix . EatHeal::INFO . $player->getName() . " is already healthy!");
+                        return;
+                    case EatHeal::TRANSACTION_ERROR_CAUSE_INSUFFICIENT_BALANCE:
+                        $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "You do not have enough money to heal " . $player->getName() . "!");
+                        return;
+                    case EatHeal::TRANSACTION_ERROR_CAUSE_NOT_UPDATED:
+                        $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Unable to make transaction due to the BedrockEconomy account balance not getting updated.");
+                        return;
+                }
+    
+                $price = ($owner->economyEnabled && $isPlayer && $result > 0) ?
+                    " for " . BedrockEconomy::getInstance()->getCurrencyManager()->getSymbol() . $result : "";
+    
+                // Sends a message to healer
+                $sender->sendMessage(EatHeal::$prefix . EatHeal::INFO . "Player " . $player->getName() . " has been healed" . $price);
+                // Sends a message to the player being healed
+                $player->sendMessage(EatHeal::$prefix . EatHeal::INFO . "You have been healed by " . $sender->getName());
+            }:
+            if ($isPlayer) {
+                $owner->healTransaction($player, true, $sender, $callback);
             } else {
-                $result = $owner->healTransaction($player, false);
+                $owner->healTransaction($player, false, null, $callback);
             }
-
-            switch ($result) {
-                case EatHeal::TRANSACTION_ERROR_CAUSE_NO_ACCOUNT:
-                    $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Unable to make transaction due to the player not having an BedrockEconomy account.");
-                    return true;
-                case EatHeal::TRANSACTION_ERROR_CAUSE_FULL:
-                    $sender->sendMessage(EatHeal::$prefix . EatHeal::INFO . $player->getName() . " is already healthy!");
-                    return true;
-                case EatHeal::TRANSACTION_ERROR_CAUSE_INSUFFICIENT_BALANCE:
-                    $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "You do not have enough money to heal " . $player->getName() . "!");
-                    return true;
-                case EatHeal::TRANSACTION_ERROR_CAUSE_NOT_UPDATED:
-                    $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Unable to make transaction due to the BedrockEconomy account balance not getting updated.");
-                    return true;
-            }
-
-            $price = ($owner->economyEnabled && $isPlayer && $result > 0) ?
-                " for " . BedrockEconomy::getInstance()->getCurrencyManager()->getSymbol() . $result : "";
-
-            // Sends a message to healer
-            $sender->sendMessage(EatHeal::$prefix . EatHeal::INFO . "Player " . $player->getName() . " has been healed" . $price);
-            // Sends a message to the player being healed
-            $player->sendMessage(EatHeal::$prefix . EatHeal::INFO . "You have been healed by " . $sender->getName());
         }
 
         return true;

@@ -81,7 +81,7 @@ class EatHeal extends PluginBase {
         return ($config === "max" ? $maxHealth : ($config > $health ? $maxHealth : (float) $config + $player->getHealth()));
     }
 
-    public function eatTransaction(Player $player, bool $isPlayer = true, Player $senderPlayer = null, \Closure $callback) : void {
+    public function eatTransaction(Player $player, bool $isPlayer, ?Player $senderPlayer, \Closure $callback) : void {
         if ($player->getHungerManager()->getFood() >= 20.0) {
             $callback(self::TRANSACTION_ERROR_CAUSE_FULL);
             return;
@@ -108,7 +108,7 @@ class EatHeal extends PluginBase {
         }
     }
 
-    public function healTransaction(Player $player, bool $isPlayer = true, Player $senderPlayer = null, \Closure $callback) : void {
+    public function healTransaction(Player $player, bool $isPlayer, ?Player $senderPlayer, \Closure $callback) : void {
         if ($player->getHealth() >= 20.0) {
             $callback(self::TRANSACTION_ERROR_CAUSE_FULL);
             return;
@@ -118,7 +118,7 @@ class EatHeal extends PluginBase {
         if ($this->economyEnabled && $isPlayer && $price > 0) {
             $name = $senderPlayer !== null ? $senderPlayer->getName() : $player->getName();
             $this->processTransaction($name, $price,
-                function (?string $result) use ($callback, $player) {
+                function (?string $result) use ($callback, $player, $price) {
                     if ($result !== null) {
                         $callback($result);
                         return;
@@ -134,7 +134,7 @@ class EatHeal extends PluginBase {
 
     private function processTransaction(string $name, int $price, \Closure $callback) : void {
         $this->economyAPI->getPlayerBalance($name, ClosureContext::create(
-            function (?int $balance) use ($callback, $price) {
+            function (?int $balance) use ($callback, $name, $price) {
                 if ($balance === null) {
                     $callback(self::TRANSACTION_ERROR_CAUSE_NO_ACCOUNT);
                     return;
