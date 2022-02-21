@@ -117,7 +117,7 @@ class EatHeal extends PluginBase {
         $price = (int) $this->getConfig()->getNested("price.heal", 0);
         if ($this->economyEnabled && $isPlayer && $price > 0) {
             $name = $senderPlayer !== null ? $senderPlayer->getName() : $player->getName();
-            $this->processTransaction($name, $price),
+            $this->processTransaction($name, $price,
                 function (?string $result) use ($callback, $player) {
                     if ($result !== null) {
                         $callback($result);
