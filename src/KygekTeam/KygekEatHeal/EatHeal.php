@@ -81,68 +81,81 @@ class EatHeal extends PluginBase {
         return ($config === "max" ? $maxHealth : ($config > $health ? $maxHealth : (float) $config + $player->getHealth()));
     }
 
-    public function eatTransaction(Player $player, bool $isPlayer = true, Player $senderPlayer = null) : string|int {
-        if ($player->getHungerManager()->getFood() >= 20.0) return self::TRANSACTION_ERROR_CAUSE_FULL;
+    public function eatTransaction(Player $player, bool $isPlayer = true, Player $senderPlayer = null, \Closure $callback) : void {
+        if ($player->getHungerManager()->getFood() >= 20.0) {
+            $callback(self::TRANSACTION_ERROR_CAUSE_FULL);
+            return;
+        }
 
         $price = (int) $this->getConfig()->getNested("price.eat", 0);
         if ($this->economyEnabled && $isPlayer && $price > 0) {
             $name = $senderPlayer !== null ? $senderPlayer->getName() : $player->getName();
-            if (($result = $this->processTransaction($name, $price)) !== null) {
-                return $result;
-            }
+            $this->processTransaction($name, $price,
+                function (?string $result) use ($callback, $player, $price) {
+                    if ($result !== null) {
+                        $callback($result);
+                        return;
+                    }
+    
+                    $eatValue = $this->getEatValue($player);
+                    $player->getHungerManager()->addFood($eatValue);
+                    if ($this->getConfig()->getNested("restore-saturation", true)) {
+                        $player->getHungerManager()->addSaturation(20);
+                    }
+                    $callback($price);
+                }
+            );
         }
-
-        $eatValue = $this->getEatValue($player);
-        $player->getHungerManager()->addFood($eatValue);
-        if ($this->getConfig()->getNested("restore-saturation", true)) {
-            $player->getHungerManager()->addSaturation(20);
-        }
-        return $price;
     }
 
-    public function healTransaction(Player $player, bool $isPlayer = true, Player $senderPlayer = null) : string|int {
-        if ($player->getHealth() >= 20.0) return self::TRANSACTION_ERROR_CAUSE_FULL;
+    public function healTransaction(Player $player, bool $isPlayer = true, Player $senderPlayer = null, \Closure $callback) : void {
+        if ($player->getHealth() >= 20.0) {
+            $callback(self::TRANSACTION_ERROR_CAUSE_FULL);
+            return;
+        }
 
         $price = (int) $this->getConfig()->getNested("price.heal", 0);
         if ($this->economyEnabled && $isPlayer && $price > 0) {
             $name = $senderPlayer !== null ? $senderPlayer->getName() : $player->getName();
-            if (($result = $this->processTransaction($name, $price)) !== null) {
-                return $result;
-            }
+            $this->processTransaction($name, $price),
+                function (?string $result) use ($callback, $player) {
+                    if ($result !== null) {
+                        $callback($result);
+                        return;
+                    }
+    
+                    $healValue = $this->getHealValue($player);
+                    $player->setHealth($healValue);
+                    $callback($price);
+                }
+            );
         }
-
-        $healValue = $this->getHealValue($player);
-        $player->setHealth($healValue);
-        return $price;
     }
 
-    private function processTransaction(string $name, int $price) : ?string {
-        $result = null;
-
+    private function processTransaction(string $name, int $price, \Closure $callback) : void {
         $this->economyAPI->getPlayerBalance($name, ClosureContext::create(
-            function (?int $balance) use ($price, &$result) {
+            function (?int $balance) use ($callback, $price) {
                 if ($balance === null) {
-                    $result = self::TRANSACTION_ERROR_CAUSE_NO_ACCOUNT;
+                    $callback(self::TRANSACTION_ERROR_CAUSE_NO_ACCOUNT);
                     return;
                 }
                 if ($balance < $price) {
-                    $result = self::TRANSACTION_ERROR_CAUSE_INSUFFICIENT_BALANCE;
+                    $callback(self::TRANSACTION_ERROR_CAUSE_INSUFFICIENT_BALANCE);
+                    return;
                 }
+
+                $this->economyAPI->subtractFromPlayerBalance($name, $price, ClosureContext::create(
+                    function (bool $updated) use ($callback) {
+                        if (!$updated) {
+                            $callback(self::TRANSACTION_ERROR_CAUSE_NOT_UPDATED);
+                            return;
+                        }
+
+                        $callback(null);
+                    }
+                ));
             }
         ));
-        if ($result !== null) {
-            return $result;
-        }
-
-        $this->economyAPI->subtractFromPlayerBalance($name, $price, ClosureContext::create(
-            function (bool $updated) use (&$result) {
-                if (!$updated) {
-                    $result = self::TRANSACTION_ERROR_CAUSE_NOT_UPDATED;
-                }
-            }
-        ));
-
-        return $result;
     }
 
     public function reloadConfig() : void {
