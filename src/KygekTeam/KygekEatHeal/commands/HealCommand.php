@@ -129,7 +129,7 @@ class HealCommand extends Command implements PluginOwned {
                 $sender->sendMessage(EatHeal::$prefix . EatHeal::INFO . "Player " . $player->getName() . " has been healed" . $price);
                 // Sends a message to the player being healed
                 $player->sendMessage(EatHeal::$prefix . EatHeal::INFO . "You have been healed by " . $sender->getName());
-            }:
+            };
             if ($isPlayer) {
                 $owner->healTransaction($player, true, $sender, $callback);
             } else {
