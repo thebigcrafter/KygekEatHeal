@@ -64,7 +64,7 @@ class HealCommand extends Command implements PluginOwned {
             }
 
             $owner->healTransaction($sender, true, null,
-                static function (?string $result) use ($owner, $sender) {
+                static function (int|string $result) use ($owner, $sender) {
                     switch ($result) {
                         case EatHeal::TRANSACTION_ERROR_CAUSE_NO_ACCOUNT:
                             $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Unable to make transaction due to the player not having an BedrockEconomy account.");
@@ -106,7 +106,7 @@ class HealCommand extends Command implements PluginOwned {
             }
 
             $isPlayer = $sender instanceof Player;
-            $callback = static function (?string $result) use ($isPlayer, $owner, $player, $sender) {
+            $callback = static function (int|string $result) use ($isPlayer, $owner, $player, $sender) {
                 switch ($result) {
                     case EatHeal::TRANSACTION_ERROR_CAUSE_NO_ACCOUNT:
                         $sender->sendMessage(EatHeal::$prefix . EatHeal::WARNING . "Unable to make transaction due to the player not having an BedrockEconomy account.");
