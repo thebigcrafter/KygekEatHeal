@@ -88,24 +88,29 @@ class EatHeal extends PluginBase {
         }
 
         $price = (int) $this->getConfig()->getNested("price.eat", 0);
+        $feedPlayer = function () use ($callback, $player, $price) {
+            $eatValue = $this->getEatValue($player);
+            $player->getHungerManager()->addFood($eatValue);
+            if ($this->getConfig()->getNested("restore-saturation", true)) {
+                $player->getHungerManager()->addSaturation(20);
+            }
+            $callback($price);
+        };
         if ($this->economyEnabled && $isPlayer && $price > 0) {
             $name = $senderPlayer !== null ? $senderPlayer->getName() : $player->getName();
             $this->processTransaction($name, $price,
-                function (?string $result) use ($callback, $player, $price) {
+                function (?string $result) use ($callback, $feedPlayer) {
                     if ($result !== null) {
                         $callback($result);
                         return;
                     }
     
-                    $eatValue = $this->getEatValue($player);
-                    $player->getHungerManager()->addFood($eatValue);
-                    if ($this->getConfig()->getNested("restore-saturation", true)) {
-                        $player->getHungerManager()->addSaturation(20);
-                    }
-                    $callback($price);
+                    $feedPlayer();
                 }
             );
         }
+
+        $feedPlayer();
     }
 
     public function healTransaction(Player $player, bool $isPlayer, ?Player $senderPlayer, \Closure $callback) : void {
@@ -115,21 +120,26 @@ class EatHeal extends PluginBase {
         }
 
         $price = (int) $this->getConfig()->getNested("price.heal", 0);
+        $healPlayer = function () use ($callback, $player, $price) {
+            $healValue = $this->getHealValue($player);
+            $player->setHealth($healValue);
+            $callback($price);
+        };
         if ($this->economyEnabled && $isPlayer && $price > 0) {
             $name = $senderPlayer !== null ? $senderPlayer->getName() : $player->getName();
             $this->processTransaction($name, $price,
-                function (?string $result) use ($callback, $player, $price) {
+                function (?string $result) use ($callback, $healPlayer) {
                     if ($result !== null) {
                         $callback($result);
                         return;
                     }
     
-                    $healValue = $this->getHealValue($player);
-                    $player->setHealth($healValue);
-                    $callback($price);
+                    $healPlayer();
                 }
             );
         }
+
+        $healPlayer();
     }
 
     private function processTransaction(string $name, int $price, \Closure $callback) : void {
