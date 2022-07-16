@@ -57,7 +57,7 @@ class EatHeal extends PluginBase {
             $this->economyAPI = null;
         } else {
             $this->economyEnabled = true;
-            $this->economyAPI = BedrockEconomy::getInstance()->getAPI();
+            $this->economyAPI = BedrockEconomyAPI::legacy();
         }
 
         $this->getServer()->getCommandMap()->registerAll("KygekEatHeal", [
