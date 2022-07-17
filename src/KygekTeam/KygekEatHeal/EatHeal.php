@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace KygekTeam\KygekEatHeal;
 
+use cooldogedev\BedrockEconomy\api\version\LegacyBEAPI;
 use cooldogedev\BedrockEconomy\api\BedrockEconomyAPI;
 use cooldogedev\BedrockEconomy\BedrockEconomy;
 use cooldogedev\BedrockEconomy\libs\cooldogedev\libSQL\context\ClosureContext;
@@ -39,7 +40,7 @@ class EatHeal extends PluginBase {
     public static string $prefix = TF::YELLOW . "[KygekEatHeal] " . TF::RESET;
 
     public bool $economyEnabled = false;
-    private ?BedrockEconomyAPI $economyAPI;
+    private ?LegacyBEAPI $economyAPI;
 
     protected function onEnable() : void {
         $this->saveDefaultConfig();
