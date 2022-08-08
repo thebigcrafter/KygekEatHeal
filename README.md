@@ -2,9 +2,9 @@
 
 <p align="center">
 
-<img src="https://poggit.pmmp.io/shield.dl.total/KygekEatHeal?style=for-the-badge" />
-<img src="https://img.shields.io/github/license/thebigcrafter/KygekEatHeal?style=for-the-badge" />
-<img src="https://img.shields.io/discord/970294579372912700?color=7289DA&label=discord&logo=discord&style=for-the-badge" />
+<img src="https://poggit.pmmp.io/shield.dl.total/KygekEatHeal?style=for-the-badge" alt="poggit" />
+<a href="https://github.com/thebigcrafter/KygekEatHeal/blob/pm4/LICENSE"><img src="https://img.shields.io/github/license/thebigcrafter/KygekEatHeal?style=for-the-badge" alt="license" /></a>
+<a href="https://discord.gg/cEXW8uK6QA"><img src="https://img.shields.io/discord/970294579372912700?color=7289DA&label=discord&logo=discord&style=for-the-badge" alt="discord" /></a>
 
 </p>
 
