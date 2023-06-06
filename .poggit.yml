@@ -2,10 +2,11 @@
 build-by-default: true
 branches:
 - main
+- pm4
 projects:
   KygekEatHeal:
     path: ""
     libs:
-      - src: KygekTeam/ktpmpl-cfs/ktpmpl-cfs
-        version: ^1.0
+      - src: thebigcrafter/ktpmpl-cfs/ktpmpl-cfs
+        version: ^4.0.0
 ...

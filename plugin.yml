@@ -1,6 +1,6 @@
 ---
 # Eat and heal a player instantly!
-# Copyright (C) 2020-2021 KygekTeam
+# Copyright (C) 2020-2022 KygekTeam
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -8,22 +8,22 @@
 # (at your option) any later version.
 
 name: KygekEatHeal
-version: 1.2.0
+version: 2.1.0
 author: KygekTeam
-api: 3.0.0
+api: 4.0.0
 main: KygekTeam\KygekEatHeal\EatHeal
+description: Eat and heal a player instantly!
 website: https://github.com/KygekTeam/KygekEatHeal
-softdepend: EconomyAPI
+softdepend: BedrockEconomy
 
 permissions:
   kygekeatheal:
     description: Permission to use all KygekEatHeal commands
     default: true
-    children:
-      kygekeatheal.eat:
-        description: Permission to use /eat command
-        default: true
-      kygekeatheal.heal:
-        description: Permission to use /heal command
-        default: true
+  kygekeatheal.eat:
+    description: Permission to use /eat command
+    default: true
+  kygekeatheal.heal:
+    description: Permission to use /heal command
+    default: true
 ...
