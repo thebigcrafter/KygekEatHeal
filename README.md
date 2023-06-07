@@ -1,11 +1,9 @@
 <h1 align="center">KygekEatHeal</h1>
 
 <p align="center">
-
 <img src="https://poggit.pmmp.io/shield.dl.total/KygekEatHeal?style=for-the-badge" alt="poggit" />
 <a href="https://github.com/thebigcrafter/KygekEatHeal/blob/pm4/LICENSE"><img src="https://img.shields.io/github/license/thebigcrafter/KygekEatHeal?style=for-the-badge" alt="license" /></a>
 <a href="https://discord.gg/PykBfE2TZ9"><img src="https://img.shields.io/discord/1087729577004122112?color=7289DA&label=discord&logo=discord&style=for-the-badge" alt="discord" /></a>
-
 </p>
 
 # 📖 About
