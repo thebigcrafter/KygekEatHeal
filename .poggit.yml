@@ -5,7 +5,6 @@ branches:
 projects:
   KygekEatHeal:
     path: ""
-    libs:
-      - src: thebigcrafter/ktpmpl-cfs/ktpmpl-cfs
-        version: ^4.0.0
+    - src: thebigcrafter/Hydrogen/Hydrogen
+      version: ^1.0.0
 ...

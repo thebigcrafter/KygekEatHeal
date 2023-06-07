@@ -15,20 +15,20 @@ declare(strict_types=1);
 namespace KygekTeam\KygekEatHeal;
 
 use cooldogedev\BedrockEconomy\api\BedrockEconomyAPI;
+use cooldogedev\BedrockEconomy\api\legacy\ClosureContext;
 use cooldogedev\BedrockEconomy\api\version\LegacyBEAPI;
 use cooldogedev\BedrockEconomy\BedrockEconomy;
-use cooldogedev\BedrockEconomy\libs\cooldogedev\libSQL\context\ClosureContext;
-use KygekTeam\KtpmplCfs\KtpmplCfs;
 use KygekTeam\KygekEatHeal\commands\EatCommand;
 use KygekTeam\KygekEatHeal\commands\HealCommand;
 use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\TextFormat as TF;
+use thebigcrafter\Hydrogen\HConfig;
+use thebigcrafter\Hydrogen\Hydrogen;
+
 use function class_exists;
 
 class EatHeal extends PluginBase {
-
-	private const IS_DEV = false;
 
 	public const INFO = TF::GREEN;
 	public const WARNING = TF::RED;
@@ -45,15 +45,11 @@ class EatHeal extends PluginBase {
 
 	protected function onEnable() : void {
 		$this->saveDefaultConfig();
-		$ktpmplCfs = new KtpmplCfs($this);
 
-		/** @phpstan-ignore-next-line */
-		if (self::IS_DEV) {
-			$ktpmplCfs->warnDevelopmentVersion();
+		if (HConfig::verifyConfigVersion($this->getConfig(), "2.1")) {
+			HConfig::resetConfig($this);
 		}
-
-		$ktpmplCfs->checkConfig("2.1");
-		$ktpmplCfs->checkUpdates();
+		Hydrogen::checkForUpdates($this);
 
 		if (!class_exists(BedrockEconomy::class)) {
 			$this->economyAPI = null;
