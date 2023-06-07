@@ -9,8 +9,7 @@
 
 name: KygekEatHeal
 version: 2.1.1
-author: KygekTeam
-authors: [thebigcrafter]
+authors: [KygekTeam, thebigcrafter]
 api: 5.0.0
 main: KygekTeam\KygekEatHeal\EatHeal
 description: Eat and heal a player instantly!
