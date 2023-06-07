@@ -5,6 +5,7 @@ branches:
 projects:
   KygekEatHeal:
     path: ""
-    - src: thebigcrafter/Hydrogen/Hydrogen
-      version: ^1.0.0
+    libs:
+      - src: thebigcrafter/Hydrogen/Hydrogen
+        version: ^1.0.0
 ...
