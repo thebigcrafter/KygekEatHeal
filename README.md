@@ -55,4 +55,4 @@ A PocketMine-MP plugin that can heal and feed yourself or other players. [Bedroc
 
 # ⚖️ License
 
-Licensed under the [GNU General Public License v3.0](https://github.com/thebigcrafter/KygekEatHeal/blob/pm4/LICENSE) license.
+Licensed under the [GNU General Public License v3.0](https://github.com/thebigcrafter/KygekEatHeal/blob/main/LICENSE) license.
