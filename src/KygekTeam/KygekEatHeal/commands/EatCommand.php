@@ -33,9 +33,11 @@ class EatCommand extends Command implements PluginOwned {
 	private EatHeal $owner;
 
 	public function __construct(string $name, EatHeal $owner) {
-		$desc = empty($owner->getConfig()->getNested("command.description.eat")) ?
-			"Eat or feed a player" : $owner->getConfig()->getNested("command.description.eat");
-		parent::__construct($name, $desc, "/eat [player]", $owner->getConfig()->getNested("command.aliases.eat", []));
+		$description = $owner->getConfig()->getNested("command.description.eat");
+		$desc = is_string($description) && $description !== "" ? $description : "Eat or feed a player";
+		$aliases = $owner->getConfig()->getNested("command.aliases.eat", []);
+		$aliases = is_array($aliases) ? array_values(array_filter($aliases, "is_string")) : [];
+		parent::__construct($name, $desc, "/eat [player]", $aliases);
 
 		$this->owner = $owner;
 		$this->setPermission("kygekeatheal.eat");
@@ -54,7 +56,8 @@ class EatCommand extends Command implements PluginOwned {
 				return true;
 			}
 
-			$cooldown = $config->getNested("cooldown.self.eat",0);
+			$cooldownConfig = $config->getNested("cooldown.self.eat", 0);
+			$cooldown = is_int($cooldownConfig) ? $cooldownConfig : 0;
 			if ($cooldown !== 0) {
 				if (isset($this->cooldownSelf[$sender->getName()]) && time() - $cooldown < $this->cooldownSelf[$sender->getName()]) {
 					$duration = $this->cooldownSelf[$sender->getName()] - (time() - $cooldown);
@@ -96,7 +99,8 @@ class EatCommand extends Command implements PluginOwned {
 				return true;
 			}
 
-			$cooldown = $config->getNested("cooldown.others.eat",0);
+			$cooldownConfig = $config->getNested("cooldown.others.eat", 0);
+			$cooldown = is_int($cooldownConfig) ? $cooldownConfig : 0;
 			if (($cooldown !== 0 && $sender instanceof Player) || (!$sender instanceof Player && $config->getNested("cooldown.enable-console", false))) {
 				if (isset($this->cooldownOther[$sender->getName()]) && time() - $cooldown < $this->cooldownOther[$sender->getName()]) {
 					$duration = $this->cooldownOther[$sender->getName()] - (time() - $cooldown);

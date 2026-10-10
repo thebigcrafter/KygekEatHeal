@@ -41,7 +41,7 @@ class EatHeal extends PluginBase {
 	public static string $prefix = TF::YELLOW . "[KygekEatHeal] " . TF::RESET;
 
 	public bool $economyEnabled = false;
-	private ?LegacyBEAPI $economyAPI;
+	private ?LegacyBEAPI $economyAPI = null;
 
 	protected function onEnable() : void {
 		$this->saveDefaultConfig();
@@ -61,14 +61,19 @@ class EatHeal extends PluginBase {
 		$this->getServer()->getCommandMap()->registerAll("KygekEatHeal", [
 			new EatCommand("eat", $this), new HealCommand("heal", $this)
 		]);
-		self::$prefix = TF::colorize($this->getConfig()->get("message-prefix", "&e[KygekEatHeal] ")) . TF::RESET;
+		$prefix = $this->getConfig()->get("message-prefix", "&e[KygekEatHeal] ");
+		self::$prefix = TF::colorize(is_string($prefix) ? $prefix : "&e[KygekEatHeal] ") . TF::RESET;
 	}
 
 	private function getEatValue(Player $player) : float {
 		$config = $this->getConfig()->getNested("points.eat", "max");
 		$food = $player->getHungerManager()->getMaxFood() - $player->getHungerManager()->getFood();
 
-		return ($config === "max" ? $food : ($config > $food ? $food : (float) $config));
+		if ($config === "max" || (!is_int($config) && !is_float($config))) {
+			return $food;
+		}
+
+		return ($config > $food ? $food : (float) $config);
 	}
 
 	private function getHealValue(Player $player) : float {
@@ -76,7 +81,11 @@ class EatHeal extends PluginBase {
 		$maxHealth = $player->getMaxHealth();
 		$health = $maxHealth - $player->getHealth();
 
-		return ($config === "max" ? $maxHealth : ($config > $health ? $maxHealth : (float) $config + $player->getHealth()));
+		if ($config === "max" || (!is_int($config) && !is_float($config))) {
+			return $maxHealth;
+		}
+
+		return ($config > $health ? $maxHealth : (float) $config + $player->getHealth());
 	}
 
 	public function eatTransaction(Player $player, bool $isPlayer, ?Player $senderPlayer, \Closure $callback) : void {
@@ -85,7 +94,8 @@ class EatHeal extends PluginBase {
 			return;
 		}
 
-		$price = (int) $this->getConfig()->getNested("price.eat", 0);
+		$priceConfig = $this->getConfig()->getNested("price.eat", 0);
+		$price = is_int($priceConfig) ? $priceConfig : 0;
 		$feedPlayer = function () use ($callback, $player, $price) {
 			$eatValue = $this->getEatValue($player);
 			$player->getHungerManager()->addFood($eatValue);
@@ -117,7 +127,8 @@ class EatHeal extends PluginBase {
 			return;
 		}
 
-		$price = (int) $this->getConfig()->getNested("price.heal", 0);
+		$priceConfig = $this->getConfig()->getNested("price.heal", 0);
+		$price = is_int($priceConfig) ? $priceConfig : 0;
 		$healPlayer = function () use ($callback, $player, $price) {
 			$healValue = $this->getHealValue($player);
 			$player->setHealth($healValue);
@@ -141,8 +152,13 @@ class EatHeal extends PluginBase {
 	}
 
 	private function processTransaction(string $name, int $price, \Closure $callback) : void {
-		$this->economyAPI->getPlayerBalance($name, ClosureContext::create(
-			function (?int $balance) use ($callback, $name, $price) {
+		$economyAPI = $this->economyAPI;
+		if ($economyAPI === null) {
+			return;
+		}
+
+		$economyAPI->getPlayerBalance($name, ClosureContext::create(
+			function (?int $balance) use ($callback, $name, $price, $economyAPI) {
 				if ($balance === null) {
 					$callback(self::TRANSACTION_ERROR_CAUSE_NO_ACCOUNT);
 					return;
@@ -152,7 +168,7 @@ class EatHeal extends PluginBase {
 					return;
 				}
 
-				$this->economyAPI->subtractFromPlayerBalance($name, $price, ClosureContext::create(
+				$economyAPI->subtractFromPlayerBalance($name, $price, ClosureContext::create(
 					function (bool $updated) use ($callback) {
 						if (!$updated) {
 							$callback(self::TRANSACTION_ERROR_CAUSE_NOT_UPDATED);
@@ -168,7 +184,8 @@ class EatHeal extends PluginBase {
 
 	public function reloadConfig() : void {
 		parent::reloadConfig();
-		self::$prefix = TF::colorize($this->getConfig()->get("message-prefix", "&e[KygekEatHeal] ")) . TF::RESET;
+		$prefix = $this->getConfig()->get("message-prefix", "&e[KygekEatHeal] ");
+		self::$prefix = TF::colorize(is_string($prefix) ? $prefix : "&e[KygekEatHeal] ") . TF::RESET;
 	}
 
 }

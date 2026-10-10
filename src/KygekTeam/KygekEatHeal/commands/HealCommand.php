@@ -33,9 +33,11 @@ class HealCommand extends Command implements PluginOwned {
 	private EatHeal $owner;
 
 	public function __construct(string $name, EatHeal $owner) {
-		$desc = empty($owner->getConfig()->getNested("command.description.heal")) ?
-			"Heal yourself or a player" : $owner->getConfig()->getNested("command.description.heal");
-		parent::__construct($name, $desc, "/heal [player]", $owner->getConfig()->getNested("command.aliases.heal", []));
+		$description = $owner->getConfig()->getNested("command.description.heal");
+		$desc = is_string($description) && $description !== "" ? $description : "Heal yourself or a player";
+		$aliases = $owner->getConfig()->getNested("command.aliases.heal", []);
+		$aliases = is_array($aliases) ? array_values(array_filter($aliases, "is_string")) : [];
+		parent::__construct($name, $desc, "/heal [player]", $aliases);
 
 		$this->owner = $owner;
 		$this->setPermission("kygekeatheal.heal");
@@ -54,7 +56,8 @@ class HealCommand extends Command implements PluginOwned {
 				return true;
 			}
 
-			$cooldown = $config->getNested("cooldown.self.heal",0);
+			$cooldownConfig = $config->getNested("cooldown.self.heal", 0);
+			$cooldown = is_int($cooldownConfig) ? $cooldownConfig : 0;
 			if ($cooldown !== 0) {
 				if (isset($this->cooldownSelf[$sender->getName()]) && time() - $cooldown < $this->cooldownSelf[$sender->getName()]) {
 					$duration = $this->cooldownSelf[$sender->getName()] - (time() - $cooldown);
@@ -96,7 +99,8 @@ class HealCommand extends Command implements PluginOwned {
 				return true;
 			}
 
-			$cooldown = $config->getNested("cooldown.others.heal",0);
+			$cooldownConfig = $config->getNested("cooldown.others.heal", 0);
+			$cooldown = is_int($cooldownConfig) ? $cooldownConfig : 0;
 			if (($cooldown !== 0 && $sender instanceof Player) || (!$sender instanceof Player && $config->getNested("cooldown.enable-console", false))) {
 				if (isset($this->cooldownOther[$sender->getName()]) && time() - $cooldown < $this->cooldownOther[$sender->getName()]) {
 					$duration = $this->cooldownOther[$sender->getName()] - (time() - $cooldown);
