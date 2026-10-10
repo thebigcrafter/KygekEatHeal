@@ -116,6 +116,7 @@ class EatHeal extends PluginBase {
 					$feedPlayer();
 				}
 			);
+			return;
 		}
 
 		$feedPlayer();
@@ -146,6 +147,7 @@ class EatHeal extends PluginBase {
 					$healPlayer();
 				}
 			);
+			return;
 		}
 
 		$healPlayer();
