@@ -1,7 +1,7 @@
 <h1 align="center">KygekEatHeal</h1>
 
 <p align="center">
-<img src="https://poggit.pmmp.io/shield.dl.total/KygekEatHeal?style=for-the-badge" alt="poggit" />
+<a href="https://github.com/thebigcrafter/KygekEatHeal/releases"><img src="https://img.shields.io/github/downloads/thebigcrafter/KygekEatHeal/total?style=for-the-badge" alt="GitHub downloads" /></a>
 <a href="https://github.com/thebigcrafter/KygekEatHeal/blob/main/LICENSE"><img src="https://img.shields.io/github/license/thebigcrafter/KygekEatHeal?style=for-the-badge" alt="license" /></a>
 <a href="https://discord.gg/PykBfE2TZ9"><img src="https://img.shields.io/discord/1087729577004122112?color=7289DA&label=discord&logo=discord&style=for-the-badge" alt="discord" /></a>
 </p>
@@ -36,9 +36,9 @@ A PocketMine-MP API 5 plugin that can heal and feed yourself or other players. [
 
 # ⬇️ Installation
 
-1. Download the latest version (It is recommended to always download the latest version for the best experience, except you're having compatibility issues).
+1. Download a release from [GitHub Releases](https://github.com/thebigcrafter/KygekEatHeal/releases). Use an older release only when investigating a compatibility issue.
 2. Place the `KygekEatHeal.phar` file into the plugins folder.
-3. Restart or start your server.
+3. Restart or start Axolotl-PM.
 4. Done!
 
 # 📜 Commands & Permissions
