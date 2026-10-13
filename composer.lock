@@ -4,8 +4,119 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "548a60f16741871b20921b2f36295c40",
-    "packages": [],
+    "content-hash": "61a8c4fb2edbc43b137cdb7a2c3eea32",
+    "packages": [
+        {
+            "name": "sof3/await-generator",
+            "version": "3.6.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/SOF3/await-generator.git",
+                "reference": "90f4dda776eaf9bcb4693599c61c42e4c584a73f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/SOF3/await-generator/zipball/90f4dda776eaf9bcb4693599c61c42e4c584a73f",
+                "reference": "90f4dda776eaf9bcb4693599c61c42e4c584a73f",
+                "shasum": ""
+            },
+            "require": {
+                "ext-bcmath": "*",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "composer/package-versions-deprecated": "1.11.99.1",
+                "infection/infection": "^0.18.2 || ^0.20.2 || ^0.26.0",
+                "phpstan/phpstan": "^0.12.84",
+                "phpunit/phpunit": "^9"
+            },
+            "type": "library",
+            "extra": {
+                "virion": {
+                    "spec": "3.0",
+                    "namespace-root": "SOFe\\AwaitGenerator"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "SOFe\\AwaitGenerator\\": "await-generator/src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "SOFe",
+                    "email": "sofe2038@gmail.com"
+                }
+            ],
+            "description": "Use async/await in PHP using generators",
+            "support": {
+                "issues": "https://github.com/SOF3/await-generator/issues",
+                "source": "https://github.com/SOF3/await-generator/tree/3.6.1"
+            },
+            "time": "2023-07-27T09:45:08+00:00"
+        },
+        {
+            "name": "thebigcrafter/hydrogen",
+            "version": "1.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thebigcrafter/Hydrogen",
+                "reference": "5cad458f4783f7812859e88855e944df00998354"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thebigcrafter/Hydrogen/zipball/5cad458f4783f7812859e88855e944df00998354",
+                "reference": "5cad458f4783f7812859e88855e944df00998354",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1",
+                "sof3/await-generator": "^3.6"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.17",
+                "phpstan/phpstan": "^2.1",
+                "pocketmine/pocketmine-mp": "^5.0"
+            },
+            "type": "library",
+            "extra": {
+                "virion": {
+                    "spec": "3.0",
+                    "namespace-root": "thebigcrafter\\Hydrogen"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "thebigcrafter\\Hydrogen\\": "src/thebigcrafter/Hydrogen"
+                }
+            },
+            "scripts": {
+                "fix-cs": [
+                    "./vendor/bin/php-cs-fixer fix"
+                ],
+                "analyse": [
+                    "./vendor/bin/phpstan analyse"
+                ],
+                "test": [
+                    "php tests/InternetTest.php"
+                ]
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "thebigcrafter"
+                }
+            ],
+            "description": "A library that provides common functionality for the plugins of thebigcrafter",
+            "time": "2026-10-13T14:30:43+00:00"
+        }
+    ],
     "packages-dev": [
         {
             "name": "adhocore/json-comment",

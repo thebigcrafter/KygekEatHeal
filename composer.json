@@ -8,8 +8,16 @@
             "type": "vcs",
             "url": "https://github.com/axolotl-pm/PocketMine-MP",
             "no-api": true
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/thebigcrafter/Hydrogen",
+            "no-api": true
         }
     ],
+    "require": {
+        "thebigcrafter/hydrogen": "^1.1.4"
+    },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.17",
         "phpstan/phpstan": "^2.1",
