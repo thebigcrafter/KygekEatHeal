@@ -89,7 +89,8 @@ class EatHeal extends PluginBase {
 	}
 
 	public function eatTransaction(Player $player, bool $isPlayer, ?Player $senderPlayer, \Closure $callback) : void {
-		if ($player->getHungerManager()->getFood() >= 20.0) {
+		$hungerManager = $player->getHungerManager();
+		if ($hungerManager->getFood() >= $hungerManager->getMaxFood()) {
 			$callback(self::TRANSACTION_ERROR_CAUSE_FULL);
 			return;
 		}
@@ -123,7 +124,7 @@ class EatHeal extends PluginBase {
 	}
 
 	public function healTransaction(Player $player, bool $isPlayer, ?Player $senderPlayer, \Closure $callback) : void {
-		if ($player->getHealth() >= 20.0) {
+		if ($player->getHealth() >= $player->getMaxHealth()) {
 			$callback(self::TRANSACTION_ERROR_CAUSE_FULL);
 			return;
 		}
