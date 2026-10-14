@@ -46,7 +46,7 @@ class EatHeal extends PluginBase {
 	protected function onEnable() : void {
 		$this->saveDefaultConfig();
 
-		if (HConfig::verifyConfigVersion($this->getConfig(), "2.1")) {
+		if (HConfig::verifyConfigVersion($this->getConfig(), "2.1.5")) {
 			HConfig::resetConfig($this);
 		}
 		Hydrogen::checkForUpdates($this);

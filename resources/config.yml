@@ -69,6 +69,6 @@ warn-development: true
 
 ##### DANGER ZONE #####
 # Do not change this (Only for internal use)!
-config-version: "2.1"
+config-version: "2.1.5"
 #######################
 ...
