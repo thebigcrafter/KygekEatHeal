@@ -27,12 +27,12 @@ price:
   eat: 0
   # Price for healing
   heal: 0
-# Health/hunger points to fill (Full health/hunger = 20 points)
-# Set to "max" to fill health/hunger to maximum when eating/healing
+# Food/health points to fill (Full food/health = the player's configured maximum)
+# Set to "max" to fill food/health to the player's maximum when eating/healing
 points:
-  # Health points when eating/feeding
+  # Food points when eating/feeding
   eat: "max"
-  # Hunger points when healing
+  # Health points when healing
   heal: "max"
 # Whether to restore saturation when eating/feeding
 # Players with full saturation won't get hungry easily
