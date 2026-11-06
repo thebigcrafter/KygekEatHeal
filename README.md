@@ -66,7 +66,7 @@ composer install
 composer analyse
 ```
 
-The packaging process uses [DevTools](https://github.com/NhanAZ/DevTools) to prepare and validate the plugin PHAR. The checked-in Poggit manifest remains the source of its dependency declaration; build tooling versions are kept in the build environment rather than copied into this user documentation.
+The packaging process uses [DevTools](https://github.com/AxolotlBucketLabs/DevTools) to prepare and validate the plugin PHAR. The checked-in Poggit manifest remains the source of its dependency declaration; build tooling versions are kept in the build environment rather than copied into this user documentation.
 
 # 🚢 Other Versions
 
